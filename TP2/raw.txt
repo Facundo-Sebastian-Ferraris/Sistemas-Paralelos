@@ -12,4 +12,18 @@ Blade*    nodo[1-16] idle
 XeonPHI   XeonPHI    down*
 GPUS      GPU[1-2]   down*
 
-Punto )
+Punto 4)
+
+#!/bin/bash
+# -N, --nodes=N number of nodes on which to run (N = min[-max])
+#SBATCH -N 1					# 
+
+#SBATCH --exclusive			#
+#SBATCH --partition=Blade	#
+#SBATCH -o salida.txt		#
+#SBATCH -e errores.txt		#
+
+echo Iniciando el programa	#
+./serie							#
+echo Fin del programa		#
+
