@@ -1,0 +1,15 @@
+Punto 3)
+
+uncoma20@frontend:~/TP2$ sinfo -o '%9P %5D %7X %5Y %4c %7Z %10N %11e'
+PARTITION NODES SOCKETS CORES CPUS THREADS NODELIST   FREE_MEM   
+Blade*    16    2       4     8    1       nodo[1-16] 1989-6013  
+XeonPHI   1     1       64    64   1       XeonPHI    N/A        
+GPUS      2     1       1     1    1       GPU[1-2]   N/A      
+
+uncoma20@frontend:~/TP2$ sinfo -o '%9P %10N %t'
+PARTITION NODELIST   STATE
+Blade*    nodo[1-16] idle
+XeonPHI   XeonPHI    down*
+GPUS      GPU[1-2]   down*
+
+Punto )
