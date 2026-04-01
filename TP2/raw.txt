@@ -68,7 +68,7 @@ int main( int argc, char *argv[]) {
 
 el codigo obtiene el nodo en que se esta ejecutando, y tambien pide la cpu que el sched esta utilizando
 
-g)
+f)
 ejecuto comando y obtengo
 
 uncoma20@frontend:~/TP2$ sinfo -N -o '%10N %10t'
@@ -103,3 +103,69 @@ Iniciando el programa cambiando nodo a 16
 Ejecutando en nodo nodo16, core 2
 Fin del programa
 
+g)
+uncoma20@frontend:~/TP2$ sbatch  --nodelist=nodo13 launch_serie 
+Submitted batch job 164020
+uncoma20@frontend:~/TP2$ cat salida.txt 
+Iniciando el programa cambiando nodo a 16
+Ejecutando en nodo nodo13, core 2
+Fin del programa
+
+h)
+uncoma20@frontend:~/TP2$ sbatch  --nodelist=nodo10 launch_serie
+Submitted batch job 164023
+uncoma20@frontend:~/TP2$ cat salida.txt 
+Iniciando el programa cambiando nodo a 16
+Ejecutando en nodo nodo10, core 3
+Fin del programa
+uncoma20@frontend:~/TP2$ 
+
+se concluye que la prioridad la tiene desde linea de comandos y no desde script
+
+5)
+a)
+uncoma20@frontend:~/TP2$ sbatch  --nodelist=nodo13 launch_serie 
+Submitted batch job 164024
+uncoma20@frontend:~/TP2$ scontrol show job 164024
+JobId=164024 JobName=launch_serie
+   UserId=uncoma20(1115) GroupId=uncoma20(1115) MCS_label=N/A
+   Priority=4294900870 Nice=0 Account=(null) QOS=(null)
+   JobState=COMPLETED Reason=None Dependency=(null)
+   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=00:00:00 TimeLimit=UNLIMITED TimeMin=N/A
+   SubmitTime=2026-04-01T15:26:07 EligibleTime=2026-04-01T15:26:07
+   AccrueTime=2026-04-01T15:26:07
+   StartTime=2026-04-01T15:26:08 EndTime=2026-04-01T15:26:08 Deadline=N/A
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-04-01T15:26:08
+   Partition=Blade AllocNode:Sid=frontend:26142
+   ReqNodeList=nodo13 ExcNodeList=(null)
+   NodeList=nodo13
+   BatchHost=nodo13
+   NumNodes=1 NumCPUs=8 NumTasks=0 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   TRES=cpu=8,node=1,billing=8
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null)
+   Command=/nethome/uncoma20/TP2/launch_serie
+   WorkDir=/nethome/uncoma20/TP2
+   StdErr=/nethome/uncoma20/TP2/errores.txt
+   StdIn=/dev/null
+   StdOut=/nethome/uncoma20/TP2/salida.txt
+   Power=
+
+Estado            = JobState
+Lista de nodos    = ReqNodeList
+Comando           = JobName
+Archivo de salida = StdOut
+Archivo de error  = StdErr
+
+b)
+
+uncoma20@frontend:~/TP2$ sbatch sleepyJob 
+Submitted batch job 164028
+uncoma20@frontend:~/TP2$ squeue
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+            164028     Blade sleepyJo uncoma20  R       0:06      1 nodo1
+
+estado R = running
