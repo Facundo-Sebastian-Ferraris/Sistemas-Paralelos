@@ -6,6 +6,23 @@ Blade*    16    2       4     8    1       nodo[1-16] 1989-6013
 XeonPHI   1     1       64    64   1       XeonPHI    N/A        
 GPUS      2     1       1     1    1       GPU[1-2]   N/A      
 
+
+especificaciones basadas en man:
+-o: indica que la informacion se muestre en pantalla
+%#@:  "%" indica especificacion de formato
+      "#" indica el largo del string
+      "@" inddica el dato a mostrar
+
+@:
+   P: nombre de particion
+   D: cantidad de nodos
+   X: cantidad de sockets
+   Y: cantidad de nucleos
+   c: cantidad de cpus
+   Z: cantidad de hilos
+   N: lista de nodos (arreglo desde-hasta)
+   e: free-mem
+
 uncoma20@frontend:~/TP2$ sinfo -o '%9P %10N %t'
 PARTITION NODELIST   STATE
 Blade*    nodo[1-16] idle
@@ -15,11 +32,10 @@ GPUS      GPU[1-2]   down*
 Punto 4)
 
 #!/bin/bash
-# -N, --nodes=N number of nodes on which to run (N = min[-max])
-#SBATCH -N 1					# 
+#SBATCH -N 1					# Indico al SBATCH cuandos nodos debe utilizar 
 
-#SBATCH --exclusive			#
-#SBATCH --partition=Blade	#
+#SBATCH --exclusive			# Evita que otros procesos utilicen el nodo mientras nuestro proceso se ejecuta
+#SBATCH --partition=Blade	# 
 #SBATCH -o salida.txt		#
 #SBATCH -e errores.txt		#
 
