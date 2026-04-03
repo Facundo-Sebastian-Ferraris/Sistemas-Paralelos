@@ -269,7 +269,7 @@ JOBID  PARTITION  NAME  USER  ST  TIME  NODES  NODELIST(REASON)
 $ sbatch --time=00:01:00 sleepyJob1
 ```
 
-Se estableció un límite de **1 minuto** para un trabajo que ejecuta `sleep 20`.
+Se estableció un límite de **1 minuto** para un trabajo que ejecuta `sleep 120`.
 
 **📊 Resultados:**
 
