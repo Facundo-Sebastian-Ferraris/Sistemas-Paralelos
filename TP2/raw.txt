@@ -168,4 +168,137 @@ uncoma20@frontend:~/TP2$ squeue
              JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
             164028     Blade sleepyJo uncoma20  R       0:06      1 nodo1
 
-estado R = running
+REF:
+short name:	R  
+long 	name:	RUNNING         
+def:			Job currently has an allocation.
+
+tiempo que lleva ejecutando: 6 segundos
+lista de nodos asignados: nodo1
+
+
+c)
+
+uncoma20@frontend:~/TP2$ sbatch sleepyJob1 --nodelist=nodo1 && sbatch sleepyJob2 --nodelist=nodo1
+Submitted batch job 164265
+Submitted batch job 164266
+uncoma20@frontend:~/TP2$ squeue
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+            164265     Blade sleepyJo uncoma20  R       0:02      1 nodo1
+            164266     Blade sleepyJo uncoma20  R       0:02      1 nodo1
+
+
+en los sleepyjobs solo se tiene un sleep de 20 segundos, pero ahora agregaremos que el uso del nodo sera exclusivo.
+
+resultados
+
+uncoma20@frontend:~/TP2$ sbatch sleepyJob1 && sbatch sleepyJob2
+Submitted batch job 164269
+Submitted batch job 164270
+uncoma20@frontend:~/TP2$ squeue
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+            164270     Blade sleepyJo uncoma20 PD       0:00      1 (Resources)
+            164269     Blade sleepyJo uncoma20  R       0:03      1 nodo1
+
+
+
+donde:
+
+PD = Pending (job is waiting resource allocation)
+es decir, que el trabajo esta en estado de pendiente
+y esta a la espera del recurso
+
+
+d)
+
+uncoma20@frontend:~/TP2$ sbatch --parsable sleepyJob1 > JobID && sleep 2 && squeue && sleep 2 && scancel "$(cat JobID)" && sleep 2 && squeue
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+            164275     Blade sleepyJo uncoma20  R       0:02      1 nodo1
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+
+
+otro comportamiento
+
+uncoma20@frontend:~/TP2$ sbatch --parsable sleepyJob1 > JobID && sleep 2 && squeue && sleep 2 && scancel "$(cat JobID)" && sleep 1 && squeue
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+            164274     Blade sleepyJo uncoma20  R       0:02      1 nodo1
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+            164274     Blade sleepyJo uncoma20 CG       0:04      1 nodo1
+
+
+e)
+
+
+uncoma20@frontend:~/TP2$ sbatch --time=00:01:00 sleepyJob1 && sleep 2 && squeue && sleep 60 && squeue
+Submitted batch job 164280
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+            164280     Blade sleepyJo uncoma20  R       0:02      1 nodo1
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+            164280     Blade sleepyJo uncoma20 CG       1:01      1 nodo1
+uncoma20@frontend:~/TP2$ squeue
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+uncoma20@frontend:~/TP2$ scontrol show job 164280
+JobId=164280 JobName=sleepyJob1
+   UserId=uncoma20(1115) GroupId=uncoma20(1115) MCS_label=N/A
+   Priority=4294900614 Nice=0 Account=(null) QOS=(null)
+   JobState=TIMEOUT Reason=TimeLimit Dependency=(null)
+   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:15
+   RunTime=00:01:01 TimeLimit=00:01:00 TimeMin=N/A
+   SubmitTime=2026-04-03T01:48:58 EligibleTime=2026-04-03T01:48:58
+   AccrueTime=2026-04-03T01:48:58
+   StartTime=2026-04-03T01:48:58 EndTime=2026-04-03T01:49:59 Deadline=N/A
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-04-03T01:48:58
+   Partition=Blade AllocNode:Sid=frontend:11546
+   ReqNodeList=nodo1 ExcNodeList=(null)
+   NodeList=nodo1
+   BatchHost=nodo1
+   NumNodes=1 NumCPUs=8 NumTasks=0 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   TRES=cpu=8,node=1,billing=8
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null)
+   Command=/nethome/uncoma20/TP2/sleepyJob1
+   WorkDir=/nethome/uncoma20/TP2
+   StdErr=/nethome/uncoma20/TP2/errores.txt
+   StdIn=/dev/null
+   StdOut=/nethome/uncoma20/TP2/salida.txt
+   Power=
+
+
+
+6)
+
+ejecuto el codigo con el lscpu y free y la salida es:
+
+uncoma20@frontend:~/TP2$ sbatch trabajo 
+Submitted batch job 164282
+uncoma20@frontend:~/TP2$ cat salida.txt 
+Arquitectura:                        x86_64
+modo(s) de operación de las CPUs:    32-bit, 64-bit
+Orden de los bytes:                  Little Endian
+Tamaños de las direcciones:          38 bits physical, 48 bits virtual
+CPU(s):                              8
+Lista de la(s) CPU(s) en línea:      0-7
+Hilo(s) de procesamiento por núcleo: 1
+Núcleo(s) por «socket»:              4
+«Socket(s)»                          2
+Modo(s) NUMA:                        1
+ID de fabricante:                    GenuineIntel
+Familia de CPU:                      6
+Modelo:                              23
+Nombre del modelo:                   Intel(R) Xeon(R) CPU           E5405  @ 2.00GHz
+Revisión:                            10
+CPU MHz:                             2000.056
+BogoMIPS:                            4000.11
+Virtualización:                      VT-x
+Caché L1d:                           32K
+Caché L1i:                           32K
+Caché L2:                            6144K
+CPU(s) del nodo NUMA 0:              0-7
+Indicadores:                         fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx lm constant_tsc arch_perfmon pebs bts rep_good nopl cpuid aperfmperf pni dtes64 monitor ds_cpl vmx tm2 ssse3 cx16 xtpr pdcm dca sse4_1 xsave lahf_lm pti tpr_shadow vnmi flexpriority dtherm
+              total        used        free      shared  buff/cache   available
+Mem:        8167492      145552     4014136       74288     4007804     7682276
+Swap:             0           0           0
+
+
