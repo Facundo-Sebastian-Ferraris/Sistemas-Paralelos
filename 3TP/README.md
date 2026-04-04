@@ -42,8 +42,14 @@
 
 
 
-| `int main() {    float i, j, a;    for (i = 0; i < 1000; i++)       for (j = 0; j < 1000000; j++)          a = i + j;    return 0; }` |
-| :---- |
+```c
+int main() {
+float i, j, a;
+for (i = 0; i < 1000; i++)
+  for (j = 0; j < 1000000; j++)
+    a = i + j;    return 0;
+}`
+```
 
 ### **3)** 💾 Técnica: "Reducción del almacenamiento para datos".
 
