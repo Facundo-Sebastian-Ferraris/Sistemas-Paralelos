@@ -34,9 +34,16 @@
 1. 🧹 Solamente aplicando el sentido común, hacer que el siguiente código de programa realice menos trabajo. Dado que el beneficio de esta técnica es trivial, no se evaluará el tiempo de ejecución de este programa (además, por esta razón, el código está incompleto).
 
    
+```c
+#include <stdio.h>
+int flag = 0;
+for (i = 0; i < 1000; i++) {
+  if (complex_func(a[i]) < 55)
+    flag = 1;
+}
 
-| `#include <stdio.h> int flag = 0; for (i = 0; i < 1000; i++) {    if (complex_func(a[i]) < 55)       flag = 1; } printf(“¿Elemento encontrado? %d\n”, flag);` |
-| :---- |
+printf(“¿Elemento encontrado? %d\n”, flag);
+```
 
 2. ⚖️ Utilizando operaciones más livianas (menos complejas), y sin modificar la estructura del algoritmo, optimizar el siguiente código de programa. Contrastar el tiempo de ejecución de la versión optimizada frente a la versión original.
 
@@ -48,7 +55,7 @@ float i, j, a;
 for (i = 0; i < 1000; i++)
   for (j = 0; j < 1000000; j++)
     a = i + j;    return 0;
-}`
+}
 ```
 
 ### **3)** 💾 Técnica: "Reducción del almacenamiento para datos".
@@ -61,8 +68,24 @@ El siguiente programa representa una grilla con células vivas y muertas del Jue
 
 3. 📈 Contrastar el programa optimizado frente a la versión original en relación al tiempo de ejecución y memoria utilizada para almacenar la matriz.
 
-| `#include <stdlib.h> #define X 20000 #define Y 20000 int main() {    int i, j;    int **m = malloc(X * sizeof(int*));    int *x = malloc(X * Y * sizeof(int));    for (i = 0; i < X; i++)       m[i] = &x[i*Y];    for(i = 0; i < X; i++)       for(j = 0; j < Y; j++)          m[i][j] = j % 2;    return 0; }` |
-| :---- |
+```c
+#include <stdlib.h>
+#define X 20000
+#define Y 20000
+int main() {
+  int i, j;
+  int **m = malloc(X * sizeof(int*));
+  int *x = malloc(X * Y * sizeof(int));
+  for (i = 0; i < X; i++)
+    m[i] = &x[i*Y];
+
+  for(i = 0; i < X; i++)
+    for(j = 0; j < Y; j++)
+      m[i][j] = j % 2;
+
+  return 0;
+}
+```
 
 ### **4)** 🔗 Técnica: "Código en Línea".
 
