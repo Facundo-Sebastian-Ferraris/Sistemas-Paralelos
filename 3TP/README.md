@@ -91,7 +91,7 @@ int main() {
 
 Optimizar el siguiente programa utilizando la técnica de Código en Línea (se requiere eliminar la función y escribir el código en donde se encuentra cada a la función). Contrastar el tiempo de ejecución de la versión optimizada frente a la versión original. ¿En qué casos cree conveniente utilizar funciones y en qué casos no? analizar en función de: funciones grandes y pequeñas, posibilidad de optimizaciones globales, incremento del tamaño del código.
 
-| ```c
+```c
 int pordos (int x) {
     return x * 2;
 }
@@ -102,15 +102,14 @@ int main() {
        res += pordos(i);
     return 0;
 }
-``` |
-| :---- |
+```
 
 ### **5)** 🔁 Técnica: "Desenrollado de bucles".
 
 El programa 1 es el original. El programa 2 resulta de aplicar la técnica de desenrollado de bucles. El programa 3, luego de aplicar desenrollado de bucles, aplicó una técnica para reducir dependencias entre instrucciones dentro de cada iteración. Ejecutar los programas y, tras observar los tiempos de ejecución de cada uno, formular hipótesis que expliquen las diferencias de tiempos.
 
-| ```c
 Programa 1
+```c
 #include <stdio.h>
 
 int main() {
@@ -121,11 +120,10 @@ int main() {
     printf("El valor calculado es: %f\n", a);
     return 0;
 }
-``` |
-| :---- |
+```
 
-| ```c
 Programa 2
+```c
 #include <stdio.h>
 
 int main() {
@@ -140,11 +138,10 @@ int main() {
     printf("El valor calculado es: %f\n", a);
     return 0;
 }
-```  |
-| :---- |
+```
 
-| ```c
 Programa 3
+```c
 #include <stdio.h>
 
 int main() {
@@ -160,14 +157,13 @@ int main() {
     printf("El valor calculado es: %f\n", a);
     return 0;
 }
-```  |
-| :---- |
+```
 
 ### **6)** ✂️ Técnica: "Extracción de subexpresiones comunes".
 
 Optimizar el siguiente programa extrayendo la subexpresión común. Contrastar el tiempo de ejecución de la versión optimizada frente a la versión original.
 
-| ```c
+```c
 #include <stdio.h>
 
 int main() {
@@ -184,14 +180,13 @@ int main() {
     printf("El valor calculado es: %d\n", a);
     return 0;
 }
-``` |
-| :---- |
+```
 
 ### **7)** 🚦 Técnica: "Evitar saltos condicionales"
 
 Optimizar el siguiente programa mediante la evitación de saltos. Contrastar el tiempo de ejecución de la versión optimizada frente a la versión original. Formular hipótesis que expliquen las diferencias observadas en los tiempos de ejecución.
 
-| ```c
+```c
 #include <stdlib.h>
 
 #define X 1000000
@@ -210,8 +205,7 @@ int main() {
           }
     return 0;
 }
-``` |
-| :---- |
+```
 
 ### **8)** 🗂️ Técnica: "Uso eficiente de la caché: localidad espacial y temporal".
 
@@ -228,7 +222,7 @@ int main() {
 
 3. 🧮 Calcular, de manera analítica, cuántos fallos de caché hay en cada una de las dos versiones del programa (original y optimizada). Para simplificar, consideraremos solamente los fallos de caché de nivel 3, y un tamaño de 128 KiB para ese nivel.
 
-| ```c
+```c
 #include <stdlib.h>
 
 #define X 50000
@@ -245,8 +239,7 @@ int main() {
           m[i][j] = i + j;
     return 0;
 }
-``` |
-| :---- |
+```
 
 ### **9)** ➕ Se requiere implementar un programa en C que realice la suma horizontal de un vector de floats (ejemplo, dado el vector {10.5, 5.5, 4}, el resultado de la suma horizontal es 20). El vector es muy grande (se requiere memoria dinámica) y el programa debería funcionar para diversos tamaños de vector, simplemente modificando el valor de un literal mediante la directiva \#define.
 
@@ -263,7 +256,7 @@ Al compilar es necesario indicar el flag correspondiente al juego de instruccion
 
 ### **10)** 🔄 Dado el siguiente código de programa que utiliza operaciones escalares, escribir su equivalente con funciones intrínsecas vectoriales. Utilizar los juegos de instrucciones disponibles que utilicen registros de mayor tamaño.
 
-| ```c
+```c
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -285,14 +278,13 @@ int main() {
     printf("elemento 999999999: %d\n",v[99999999]);
     return 0;
 }
-``` |
-| :---- |
+```
 
 ## 🎁 Ejercicio Adicional
 
 ### 🔄 Dado el siguiente código de programa que utiliza operaciones escalares, escribir su equivalente con funciones intrínsecas vectoriales. Utilizar los juegos de instrucciones disponibles que utilicen registros de mayor tamaño.
 
-| ```c
+```c
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -317,6 +309,5 @@ int main() {
     printf("v[elementos-1]=%11d\n", v[elementos-1]);
     return 0;
 }
-``` |
-| :---- |
+```
 
