@@ -1,91 +1,144 @@
-Aquí tienes el contenido del **Trabajo Práctico Nº 4** organizado en formato Markdown, con un diseño optimizado, emojis significativos y las referencias a las imágenes integradas.
+# 📊 Análisis de Rendimiento de Aplicaciones Paralelas - 2026
 
----
+##  Trabajo Práctico Nº 4 - Evaluación de Rendimiento de Aplicaciones Paralelas
 
-# 🚀 Trabajo Práctico Nº 4: Evaluación de Rendimiento de Aplicaciones Paralelas
-
-Este práctico se centra en la **instrumentación de aplicaciones** para realizar mediciones temporales y la **evaluación de rendimiento** mediante métricas de escalabilidad fuerte y débil.
+![Universidad Nacional del Comahue](img/image-001.png)
 
 ---
 
 ## 🎯 Objetivos de la práctica
-*   🛠️ **Instrumentar aplicaciones** para realizar mediciones temporales.
-*   📊 **Evaluar el rendimiento**: métricas, escalabilidad fuerte y escalabilidad débil.
+
+- 🛠️ **Instrumentar aplicaciones** para realizar mediciones temporales
+- 📈 **Evaluar el rendimiento** de aplicaciones paralelas: métricas, escalabilidad fuerte y débil
 
 ---
 
-## 📑 Ejercicio 1: Análisis de Rendimiento con OpenMP
-Este ejercicio consiste en analizar una aplicación implementada con el modelo de **memoria compartida OpenMP**. 
+## 📝 Ejercicios
 
-> [!NOTE]
-> OpenMP funciona exclusivamente en máquinas de memoria compartida, por lo que su uso se restringe a un solo nodo del clúster. Su modelo consiste en lanzar un único proceso que genera múltiples hilos de ejecución.
+### 1️⃣ Análisis de Rendimiento con OpenMP
 
-### ❄️ El Programa: Conjuntos de Julia
-El programa calcula "conjuntos de Julia", una familia de conjuntos fractales.
+Este ejercicio consiste en analizar el rendimiento de una aplicación implementada con el modelo de programación paralela de **memoria compartida OpenMP**. 
 
-![Fractal Julia Set](https://raw.githubusercontent.com/uncoma-pueblo/assets/main/julia_fractal.jpg)
-*Ejemplo de archivo generado por el programa `julia.c`*.
+> ⚠️ **Importante:** OpenMP solo funciona en máquinas de memoria compartida; por lo tanto, su uso se restringe a un **solo nodo del clúster**.
 
-#### 🛠️ Instrucciones de Preparación
-1.  **Compilación**: Utilizar GCC con soporte para OpenMP y optimización máxima.
-    ```bash
-    $ gcc -fopenmp -O3 julia.c -o julia
-    ```
-2.  **Parámetros**: El programa recibe el `alto` y `ancho` de la imagen. 
-    *   *Ejemplo*: `./julia 10000 2000` (genera una imagen de 10.000 filas por 2.000 columnas).
-3.  **Variable de Entorno**: Se utiliza `OMP_NUM_THREADS` para definir la cantidad de hilos.
+El modelo de ejecución de OpenMP consiste en lanzar un **único proceso** que a su vez lanzará **múltiples hilos de ejecución**.
 
----
+#### 🧮 Programa a Evaluar: Conjuntos de Julia
 
-### 📈 i. Estudio de Escalabilidad Fuerte
-Se busca evaluar cómo varía el tiempo al aumentar los procesadores para un **tamaño de problema fijo**.
+El programa calcula **"conjuntos de Julia"**. Los conjuntos de Julia son una familia de conjuntos fractales que se obtienen al estudiar el comportamiento de los números complejos al ser iterados por una función holomorfa.
 
-*   **Configuración**: Alto: 240.000 | Ancho: 2.000.
-*   **Cores**: 2, 4, 6, 8, 10, ... hasta el total del nodo.
+**Ejemplo de archivo generado:**
 
-**Tareas a realizar:**
-- [ ] 📝 Escribir el script de automatización.
-- [ ] 📉 Graficar la curva de **Tiempo de ejecución**.
-- [ ] 📈 Graficar la curva de **Speedup** (incluir el ideal/lineal).
-- [ ] 📊 Graficar la curva de **Eficiencia Paralela**.
-- [ ] ✍️ Describir los resultados obtenidos.
+![Conjunto de Julia](img/image-000.png)
 
----
+#### 📋 Observaciones Importantes
 
-### 📉 ii. Estudio de Escalabilidad Débil
-Se busca evaluar el rendimiento aumentando la carga de trabajo de forma proporcional al número de cores.
+- 🔨 **Compilación:** Compilar el programa OpenMP `julia.c` con el compilador GCC, utilizar la opción de OpenMP y la opción de optimización `-O3`:
+  ```bash
+  $ gcc -fopenmp -O3 julia.c -o julia
+  ```
 
-*   **Configuración**: 8.000 (alto) x 2.000 (ancho) **por cada core**.
-*   **Cores**: 2, 4, 6, 8, 10, ... hasta el total del nodo.
+- 📐 **Parámetros:** El programa tiene dos parámetros, **alto** y **ancho** de la imagen. Por ejemplo, si ejecutamos `./julia 10000 2000` la imagen tendrá **10.000 filas por 2.000 columnas**.
 
-**Tareas a realizar:**
-- [ ] 📝 Escribir el script que calcule el tamaño del problema dinámicamente (se sugiere variar la altura y dejar fijo el ancho).
-- [ ] 📉 Graficar la curva de **Tiempo de ejecución**.
-- [ ] ✍️ Describir los resultados.
+- ⏱️ **Cómputo:** El cómputo requerido para procesar todas las celdas de la matriz es **proporcional al número de celdas**.
 
----
+- 🕒 **Salida:** La salida del programa indica el **tiempo de ejecución**.
 
-## ⏱️ Ejercicio 2: Instrumentación y Medición de Tiempos
-Se trabaja sobre la medición de tiempo transcurrido entre dos puntos de un programa.
+#### 🤖 Script de Referencia
 
-1.  **Analizar `programa1.c`**: Ejemplo provisto de medición de tiempos.
-2.  **Completar `programa2.c`**: Agregar mediciones para que los resultados de ejecuciones cortas sean representativos de ejecuciones largas.
-3.  **Estimación**: Indicar cómo estimar el tiempo para una ejecución con **n = 1.000.000**.
+El siguiente script puede servir de referencia para automatizar la ejecución de los experimentos con diferentes parámetros:
+
+```bash
+height=2000
+width=1000
+
+listOfCores="1 $(seq 2 2 8)"
+
+for cores in $listOfCores; do
+   echo Experimento con cores: $cores
+   export OMP_NUM_THREADS=$cores
+   ./julia $height $width
+   echo -------------------------------
+done
+```
+
+> 📌 La variable de entorno `OMP_NUM_THREADS` es utilizada para indicar, al entorno de ejecución de OpenMP, el **número de hilos a utilizar**.
 
 ---
 
-## 🏎️ Ejercicio 3: Cálculo de Aceleración (TP3)
-Para los ejercicios **8 y 10 del TP3**, calcular la aceleración (Speedup) de los programas optimizados comparándolos contra las versiones sin optimizar.
+### 📊 Ejercicio 1.i: Escalabilidad Fuerte
+
+Se requiere evaluar el rendimiento de la aplicación mediante un **estudio de escalabilidad fuerte**.
+
+#### 📌 Configuración:
+- 🔢 Cantidad de cores: **2, 4, 6, 8, 10, ..., y hasta el número total de cores del nodo seleccionado**
+- 📏 Problema: **alto 240.000 y ancho 2.000**
+
+#### ✅ Se requiere:
+
+- **a)** 📜 Escribir el script utilizado para la ejecución de los experimentos
+- **b)** 📈 Graficar la curva del **Tiempo de ejecución**
+- **c)** 🚀 Graficar la curva del **Speedup** (en el gráfico indicar también el speedup ideal/lineal)
+- **d)** 📊 Graficar la curva de la **Eficiencia Paralela**
+- **e)** 📝 Describir los resultados
 
 ---
 
-## 🖼️ Galería de Imágenes (Assets)
-A continuación, se listan los recursos visuales referenciados en el documento:
+### 📈 Ejercicio 1.ii: Escalabilidad Débil
 
-1.  **Logo Universidad**: [Logotipo UNCO](https://raw.githubusercontent.com/uncoma-pueblo/assets/main/logo_unco.png)
-2.  **Logo Facultad/LIDI**: [Logotipo Facultad de Informática](https://raw.githubusercontent.com/uncoma-pueblo/assets/main/logo_lidi.png)
-3.  **Fractal Julia**: [Imagen Fractal Roja](https://raw.githubusercontent.com/uncoma-pueblo/assets/main/julia_fractal.jpg)
+Se requiere evaluar el rendimiento de la aplicación mediante un **estudio de escalabilidad débil**.
+
+#### 📌 Configuración:
+- 🔢 Cantidad de cores: **2, 4, 6, 8, 10, ..., y hasta el número total de cores del nodo seleccionado**
+- 📏 Problema: **alto 8.000 y ancho 2.000 por core**
+
+#### ✅ Se requiere:
+
+- **a)** 📜 Escribir el script que incluya el **cálculo del tamaño del problema** (alto y ancho) dependiente del número de cores de cada experimento
+  > 💡 **Ayuda:** para simplificar el cálculo, dejar fijo el ancho e ir variando la altura
+- **b)** 📈 Graficar la curva del **Tiempo de ejecución**
+- **c)** 📝 Describir los resultados
 
 ---
-> [!TIP]
-> El cómputo requerido para procesar la matriz es proporcional al número de celdas. La salida del programa siempre indicará el tiempo de ejecución final.
+
+### 2️⃣ Instrumentación de un Programa Serie
+
+**Instrumentación de un programa serie para la medición de tiempos**
+
+Se provee el programa `programa1.c`, que muestra un ejemplo en el que se mide el tiempo transcurrido entre dos puntos de un programa.
+
+#### ✅ Tareas:
+
+- 🛠️ Completar el programa `programa2.c` con **mediciones de tiempo**
+- 🎯 Tener en cuenta que se desean realizar experimentos con **ejecuciones cortas** pero cuyos resultados sean **representativos de ejecuciones muy largas**
+- 🔮 Indicar cómo se podría estimar el tiempo para una ejecución con: **n = 1.000.000**
+
+---
+
+### 3️⃣ Cálculo de Aceleración
+
+Para los **ejercicios 8 y 10 del TP3**, calcular la **aceleración** de los programas optimizados frente a los programas sin optimizar.
+
+#### ✅ Se requiere:
+
+- ⚡ Calcular la **aceleración** (speedup) de los programas optimizados
+- 📊 Comparar con los programas sin optimizar
+
+---
+
+## 📚 Recursos Adicionales
+
+### 🖼️ Imágenes Extraídas
+
+- **Fractal de Julia:** ![Julia](img/image-000.png)
+- **Logo Universidad (outline):** ![Logo UNCo outline](img/image-001.png)
+- **Logo Universidad:** ![Logo UNCo](img/image-002.png)
+- **Ícono de carga (azul):** ![Loading](img/image-003.png)
+- **Ícono de carga (blanco):** ![Loading](img/image-004.png)
+
+---
+
+## 📅 Fecha: 2026
+
+**Facultad de Informática**  
+**Universidad Nacional del Comahue**
