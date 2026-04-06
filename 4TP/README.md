@@ -1,9 +1,6 @@
 # 📊 Análisis de Rendimiento de Aplicaciones Paralelas - 2026
 
 ##  Trabajo Práctico Nº 4 - Evaluación de Rendimiento de Aplicaciones Paralelas
-
-![Universidad Nacional del Comahue](img/image-001.png)
-
 ---
 
 ## 🎯 Objetivos de la práctica
@@ -125,20 +122,3 @@ Para los **ejercicios 8 y 10 del TP3**, calcular la **aceleración** de los prog
 - 📊 Comparar con los programas sin optimizar
 
 ---
-
-## 📚 Recursos Adicionales
-
-### 🖼️ Imágenes Extraídas
-
-- **Fractal de Julia:** ![Julia](img/image-000.png)
-- **Logo Universidad (outline):** ![Logo UNCo outline](img/image-001.png)
-- **Logo Universidad:** ![Logo UNCo](img/image-002.png)
-- **Ícono de carga (azul):** ![Loading](img/image-003.png)
-- **Ícono de carga (blanco):** ![Loading](img/image-004.png)
-
----
-
-## 📅 Fecha: 2026
-
-**Facultad de Informática**  
-**Universidad Nacional del Comahue**
