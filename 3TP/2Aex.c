@@ -23,7 +23,7 @@ int main(){
 int solucionOptima(){
 	int flag = 0;
 	int aMax = n;
-	while(flag == 0 && i < aMax){
+	while(!flag && i < aMax){
 		flag = complex_func(a[i]) < 55;
 		i++;
 	}

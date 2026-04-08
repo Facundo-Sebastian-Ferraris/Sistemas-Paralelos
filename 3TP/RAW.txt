@@ -1,21 +1,7 @@
 2)
-
-uncoma20@frontend:~/3TP/2P/Bsec$ gcc -O0 2Bex.c -o 2BExecOpt0 && gcc -O3 2Bex.c -o 2BExecOpt3
-uncoma20@frontend:~/3TP/2P/Bsec$ sbatch --parsable sb2BO0 && sbatch --parsable sb2BO3
-164412
-164413
-uncoma20@frontend:~/3TP/2P/Bsec$ echo "Optimizacion Original" && cat 2BEO0.out && echo "" && echo "Optimizacion tipo 3" && cat 2BEO3.out 
-Optimizacion Original
-
-real	0m0,008s
-user	0m0,007s
-sys	0m0,000s
-
-Optimizacion tipo 3
-
-real	0m0,003s
-user	0m0,001s
-sys	0m0,000s
+	b)
+	Solucion Inicial: 5,524s
+	Solucion Nueva: 3,476s
 
 
 3)

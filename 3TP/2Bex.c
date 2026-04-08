@@ -8,7 +8,7 @@ float solucionVieja(){
 
 
 	for(i = 0; i < 1000; i++){
-		for(j = 0; j < 1000; j++){
+		for(j = 0; j < 1000000; j++){
 			a = i + j;
 		}
 	}
@@ -16,19 +16,27 @@ float solucionVieja(){
 	return a;
 }
 
-
-int solucionNueva(int n){
+int solucionNueva(){
 	int
-		a = (n*n)+1,
-		b = n*(a*a);
+		i,
+		j,
+		a;
 
 
-	return b;
+	for(i = 0; i < 1000; i++){
+		for(j = 0; j < 1000000; j++){
+			a = i + j;
+		}
+	}
+
+	return a;
 }
 
-
-int main(){
-	float a = solucionVieja();
-	printf("valor solVieja: %f\n", a);
+int main(int arg, char *argv[]){
+	if(arg < 1){
+		float a = solucionVieja();
+	} else {
+		int a = solucionNueva();
+	}
 	return 0;
 }
