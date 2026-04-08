@@ -104,7 +104,14 @@ int solucionNueva(){
 
 ## Ejercicio 3: Técnica "Reducción del almacenamiento para datos"
 
-> ⏳ Pendiente
+### 3.1) Diagrama de la estructura de datos
+
+A continuación se muestra el diagrama que representa punteros y bloques de memoria de la estructura de datos utilizada para la grilla:
+
+![Diagrama de la estructura de datos](p3Adiagrama.png)
+
+**Ventajas frente a una declaración de matriz estándar:**
+- ...
 
 ---
 
