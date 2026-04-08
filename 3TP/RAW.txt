@@ -6,4 +6,14 @@
 
 3)
 
+I)
+Ventajas de usar un solo bloque de memoria:
+	-	Datos alineados: 
+		-	La CPU accede de forma rapida y eficiente, mejorando el rendimiento.
+		-	Menos saltos de memoria, aprovchando de mejor forma la cache y reduciendo el tiempo de ejecucion
+	-	Memoria dinamica: permite variar el tamaño de la memoria durante la ejecucion.
 
+
+
+
+II)

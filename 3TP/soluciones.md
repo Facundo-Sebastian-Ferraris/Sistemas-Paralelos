@@ -110,8 +110,12 @@ A continuación se muestra el diagrama que representa punteros y bloques de memo
 
 ![Diagrama de la estructura de datos](p3Adiagrama.png)
 
-**Ventajas frente a una declaración de matriz estándar:**
-- ...
+**Ventajas de usar un solo bloque de memoria:**
+
+- **Datos alineados:**
+  - La CPU accede de forma rápida y eficiente, mejorando el rendimiento.
+  - Menos saltos de memoria, aprovechando de mejor forma la caché y reduciendo el tiempo de ejecución.
+- **Memoria dinámica:** permite variar el tamaño de la memoria durante la ejecución.
 
 ---
 
