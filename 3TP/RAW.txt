@@ -16,4 +16,21 @@ Ventajas de usar un solo bloque de memoria:
 
 
 
-II)
+III)
+
+La reduccion de datos consiste en achicar el size del tipo de dato ya que solo guardaremos estados booleanes, y el tipo de dato minimo es char que ocupa 1byte, en vez de int que ocupa 4bytes
+
+Ejecucion con int
+real	0m2,648s
+user	0m2,034s
+sys	0m0,612s
+
+Ejecucion con char
+real	0m2,144s
+user	0m1,984s
+sys	0m0,156s
+
+
+La difrencia de tamaño de la memoria es de 
+utilizando int:   (20000^2)* 4   =  16M bytes   = 15.26 mib
+utilizando char:  (20000^2)      =  400M bytes  = 381.47 mib
