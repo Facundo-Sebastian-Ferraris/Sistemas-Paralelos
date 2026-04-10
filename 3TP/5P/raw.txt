@@ -1,0 +1,57 @@
+uncoma20@frontend:~/3TP/5P$ p=1
+uncoma20@frontend:~/3TP/5P$ cat salida_p"$p".txt errores_p"$p".txt && p=$((++p))
+Programa 1
+El valor calculado es: 4.000000
+
+real	0m0,147s
+user	0m0,143s
+sys	0m0,000s
+uncoma20@frontend:~/3TP/5P$ cat salida_p"$p".txt errores_p"$p".txt && p=$((++p))
+Programa 2
+El valor calculado es: 1341241022333176806589091509425459667345178664432423229161028386642484570103890808681507448902751741522772669582284049883718444435015173148102328915962015083655399985831968611462955658327122235452928707769951777613414400.000000
+
+real	0m0,133s
+user	0m0,128s
+sys	0m0,000s
+uncoma20@frontend:~/3TP/5P$ cat salida_p"$p".txt errores_p"$p".txt && p=$((++p))
+Programa 3
+El valor calculado es: 4.000000
+
+real	0m0,037s
+user	0m0,028s
+sys	0m0,004s
+
+
+El problema en programa 2 es que la variable no estaba iniciliada y se estaba guardando basura.
+
+ahora al inicializarse y probar de nuevo resulta en
+
+
+Programa 1
+El valor calculado es: 4.000000
+
+real	0m0,148s
+user	0m0,142s
+sys	0m0,000s
+uncoma20@frontend:~/3TP/5P$ cat salida_p"$p".txt errores_p"$p".txt && p=$((++p))
+Programa 2
+El valor calculado es: 4.000000
+
+real	0m0,132s
+user	0m0,124s
+sys	0m0,004s
+uncoma20@frontend:~/3TP/5P$ cat salida_p"$p".txt errores_p"$p".txt && p=$((++p))
+Programa 3
+El valor calculado es: 4.000000
+
+real	0m0,035s
+user	0m0,029s
+sys	0m0,004s
+
+
+Ahora que los valores son correctos, podemos observar que el codigo original al tener operaciones dependientes, no es posible la paralelizacion a nivel instrucciones,
+por lo tanto es el programa que demora mas tiempo.
+
+En el segundo programa tarda menos debido al desenrrollado de bucles, que reduce los saltos de bucle 4 veces.
+
+En el tercer programa es el que menos tarda, ya que se logra el desenrrollado de bucles, y usando mas variables para prevenir la dependencia de variables, pudiendo paralelizar las intrucciones

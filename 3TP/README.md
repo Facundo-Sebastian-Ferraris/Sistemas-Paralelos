@@ -28,8 +28,10 @@
 ## 📝 Ejercicios
 
 ### **1)** 📊 Describir los niveles de optimización 0, 2 y 3 de GCC o ICC.
+✅ **[Ver solución →](soluciones.md#ejercicio-1-niveles-de-optimización-de-gcc)**
 
 ### **2)** 🛠️ Técnica: "Hacer menos trabajo y más liviano".
+✅ **[Ver solución →](soluciones.md#ejercicio-2-técnica-hacer-menos-trabajo-y-más-liviano)**
 
 1. 🧹 Solamente aplicando el sentido común, hacer que el siguiente código de programa realice menos trabajo. Dado que el beneficio de esta técnica es trivial, no se evaluará el tiempo de ejecución de este programa (además, por esta razón, el código está incompleto).
 
@@ -59,6 +61,7 @@ for (i = 0; i < 1000; i++)
 ```
 
 ### **3)** 💾 Técnica: "Reducción del almacenamiento para datos".
+✅ **[Ver solución →](soluciones.md#ejercicio-3-técnica-reducción-del-almacenamiento-para-datos)**
 
 El siguiente programa representa una grilla con células vivas y muertas del Juego de la Vida. El programa arma una estructura de datos que permite almacenar el estado de cada célula (cero para célula muerta y uno para célula viva).
 
@@ -88,6 +91,7 @@ int main() {
 ```
 
 ### **4)** 🔗 Técnica: "Código en Línea".
+✅ **[Ver solución →](soluciones.md#ejercicio-4-técnica-código-en-línea)**
 
 Optimizar el siguiente programa utilizando la técnica de Código en Línea (se requiere eliminar la función y escribir el código en donde se encuentra cada a la función). Contrastar el tiempo de ejecución de la versión optimizada frente a la versión original. ¿En qué casos cree conveniente utilizar funciones y en qué casos no? analizar en función de: funciones grandes y pequeñas, posibilidad de optimizaciones globales, incremento del tamaño del código.
 
@@ -105,6 +109,7 @@ int main() {
 ```
 
 ### **5)** 🔁 Técnica: "Desenrollado de bucles".
+✅ **[Ver solución →](soluciones.md#ejercicio-5-técnica-desenrollado-de-bucles)**
 
 El programa 1 es el original. El programa 2 resulta de aplicar la técnica de desenrollado de bucles. El programa 3, luego de aplicar desenrollado de bucles, aplicó una técnica para reducir dependencias entre instrucciones dentro de cada iteración. Ejecutar los programas y, tras observar los tiempos de ejecución de cada uno, formular hipótesis que expliquen las diferencias de tiempos.
 

@@ -119,15 +119,136 @@ A continuación se muestra el diagrama que representa punteros y bloques de memo
 
 ---
 
+### 3.2) Optimización mediante reducción del almacenamiento
+
+**Descripción:** La reducción de datos consiste en achicar el size del tipo de dato ya que solo guardaremos estados booleanos. El tipo de dato mínimo es `char` que ocupa 1 byte, en vez de `int` que ocupa 4 bytes.
+
+**Archivo original (`3-2ex.c`):** Utiliza `int` para almacenar valores booleanos (0 o 1).
+
+**Archivo optimizado (`3-2Optex.c`):** Utiliza `char` para almacenar los mismos valores, reduendo el consumo de memoria.
+
+---
+
+### 3.3) Comparación de rendimiento y memoria
+
+#### Tiempo de ejecución
+
+| Versión | Real | User | Sys |
+|---------|------|------|-----|
+| Con `int` | `0m2,648s` | `0m2,034s` | `0m0,612s` |
+| Con `char` | `0m2,144s` | `0m1,984s` | `0m0,156s` |
+
+**Mejora:** `~0,5s` en tiempo real.
+
+#### Uso de memoria
+
+| Tipo de dato | Cálculo | Bytes | MiB |
+|--------------|---------|-------|-----|
+| `int` (4 bytes) | $(20000^2) \times 4$ | 1.600.000.000 | ~1526 MiB |
+| `char` (1 byte) | $(20000^2) \times 1$ | 400.000.000 | ~381 MiB |
+
+**Ahorro de memoria:** ~1145 MiB (75% menos memoria).
+
+---
+
 ## Ejercicio 4: Técnica "Código en Línea"
 
-> ⏳ Pendiente
+### Descripción
+
+Se optimiza el siguiente programa eliminando la función y escribiendo el código directamente donde se realiza la llamada:
+
+```c
+// Versión original con llamada a función
+int pordos(int x){
+   return x*2;
+}
+
+// Versión optimizada con código en línea
+res += (i*2);  // en lugar de res += pordos(i);
+```
+
+### Resultados de ejecución (sin optimización del compilador)
+
+| Versión | Tiempo real |
+|---------|-------------|
+| Con llamada a función | `0m1,765s` |
+| Con código en línea | `0m0,255s` |
+
+**Diferencia:** `1,51s` a favor del código en línea.
+
+### Resultados con optimización `-O3`
+
+| Versión | Tiempo real |
+|---------|-------------|
+| Con llamada a función | `0m0,006s` |
+| Con código en línea | `0m0,004s` |
+
+**Diferencia:** Mínima (`0,002s`).
+
+### Conclusión
+
+- **Llamada por funciones:** Tiene cierto overhead (peso) que demora la ejecución al realizar el llamado.
+- **Código en línea:** Al no tener llamadas de función, elimina los tiempos de demora asociados al salto y retorno.
+- **Recomendación:** Es preferible usar funciones cuando se trata de procedimientos más complejos, donde el overhead es despreciable frente al trabajo realizado. Para funciones pequeñas y frecuentemente llamadas, el código en línea ofrece mejor rendimiento.
+- **Con optimización `-O3`:** El compilador realiza inline automático, por lo que la diferencia se vuelve mínima.
 
 ---
 
 ## Ejercicio 5: Técnica "Desenrollado de bucles"
 
-> ⏳ Pendiente
+### Programas analizados
+
+#### Programa 1 (Original)
+```c
+register int i;
+register double a = 0;
+for (i = 0; i < 40000000; i++)
+   a+= 0.0000001;
+```
+
+#### Programa 2 (Desenrollado de bucles)
+```c
+register int i;
+register double a = 0;
+for (i = 0; i < 40000000; i+=4) {
+   a+= 0.0000001;
+   a+= 0.0000001;
+   a+= 0.0000001;
+   a+= 0.0000001;
+}
+```
+
+#### Programa 3 (Desenrollado + reducción de dependencias)
+```c
+register int i;
+register double a = 0, a1 = 0, a2 = 0, a3 = 0;
+for (i = 0; i < 40000000; i+=4) {
+      a+= 0.0000001;
+      a1+= 0.0000001;
+      a2+= 0.0000001;
+      a3+= 0.0000001;
+}
+a+=a1+a2+a3;
+```
+
+### Resultados de ejecución
+
+| Programa | Tiempo real | Observaciones |
+|----------|-------------|---------------|
+| Programa 1 (Original) | `0m0,148s` | Operaciones dependientes, no permite paralelización a nivel de instrucciones |
+| Programa 2 (Desenrollado) | `0m0,132s` | Reduce los saltos de bucle 4 veces |
+| Programa 3 (Desenrollado + variables independientes) | `0m0,035s` | Permite paralelizar instrucciones al eliminar dependencias |
+
+### Análisis
+
+1. **Programa 1:** Es el más lento debido a que las operaciones son dependientes entre sí, lo que impide la paralelización a nivel de instrucciones (ILP).
+
+2. **Programa 2:** Mejora ligeramente el tiempo al reducir la cantidad de saltos de bucle (se itera 4 veces menos). Sin embargo, mantiene la dependencia en la variable `a`.
+
+3. **Programa 3:** Es el más rápido porque:
+   - Logra el desenrollado de bucles (menos saltos).
+   - Usa variables independientes (`a`, `a1`, `a2`, `a3`) para prevenir la dependencia de datos.
+   - Permite al procesador paralelizar las instrucciones, aprovechando el ILP (Instruction Level Parallelism).
 
 ---
 

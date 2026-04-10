@@ -1,0 +1,49 @@
+uncoma20@frontend:~/3TP/4P$ cat salidaByFunction.txt erroresByFunction.txt 
+Algoritmo a ejecutar
+argumento agregado a
+procede con algoritmo con llamado de funciones
+
+real	0m1,765s
+user	0m1,760s
+sys	0m0,000s
+uncoma20@frontend:~/3TP/4P$ cat salidaInLine.txt erroresInLine.txt 
+Algoritmo a ejecutar
+argumento agregado b
+procede con algoritmo con codigo sobre linea
+
+real	0m0,255s
+user	0m0,253s
+sys	0m0,000s
+
+
+
+
+Conclusion: se concluye que el llamado por funciones tiene cierto peso que demora la ejecucion para ir al llamado.
+	En cambio la ejecucion desde la misma linea, al no tener llamados de funcion, no existen los tiempos de demora para dirigirse a la funcion.
+Diferencia de tiempo 1,51s.
+
+Es preferible el llamado de funciones cuando se trata de procedimientos mas complejos
+
+Con optimizacion tipo 3
+
+uncoma20@frontend:~/3TP/4P$ cat salidaByFunction.txt erroresByFunction.txt 
+Algoritmo a ejecutar
+argumento agregado a
+procede con algoritmo con llamado de funciones
+
+real	0m0,006s
+user	0m0,001s
+sys	0m0,000s
+uncoma20@frontend:~/3TP/4P$ cat salidaInLine.txt erroresInLine.txt 
+Algoritmo a ejecutar
+argumento agregado b
+procede con algoritmo con codigo sobre linea
+
+real	0m0,004s
+user	0m0,001s
+sys	0m0,000s
+
+
+La diferencia es minima.
+
+
