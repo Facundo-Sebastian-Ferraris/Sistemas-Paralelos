@@ -1,0 +1,33 @@
+Las intrucciones escalares son aquellas que toman valores individuales y
+produce un unico resultado.
+
+comando para compilar el codigo optimizado:
+gcc -Wall -g -msse4.2 9opt.c -o 9x 
+
+
+se implemento SSE 4.2 que trabaja con 128bits, donde para las operaciones flotantes equivale a 4 elementos. Pues un flotante pesa 4bytes.
+
+Ademas se realizo alineamiento para que las intrucciones instrinsecas obtengas en un mismo lote los valores a sumar.
+
+
+uncoma20@frontend:~/3TP/9P$ gcc -Wall -g -O0 9ex.c -o 9x
+uncoma20@frontend:~/3TP/9P$ gcc -Wall -g -O3 -msse4.2 9opt.c -o 9opt
+uncoma20@frontend:~/3TP/9P$ sbatch vIni && sbatch vOpt 
+Submitted batch job 168250
+Submitted batch job 168251
+uncoma20@frontend:~/3TP/9P$ cat salida_vIni.txt errores_vIni.txt && echo "" && echo "" && cat salida_vOpt.txt errores_vOpt.txt 
+Algoritmo a ejecutar
+valor obtenido: 67108864.000000
+
+real	0m0,790s
+user	0m0,637s
+sys	0m0,148s
+
+
+Algoritmo a ejecutar
+valor obtenido: 67108864.000000
+
+real	0m0,303s
+user	0m0,141s
+sys	0m0,157s
+

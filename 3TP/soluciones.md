@@ -432,7 +432,103 @@ El acceso secuencial a memoria (row-major en C) aprovecha la localidad espacial:
 
 ## Ejercicio 9: Suma horizontal con instrucciones vectoriales
 
-> ⏳ Pendiente
+### 9.1) Solución escalar (`9ex.c`)
+
+Se implementa la suma horizontal de un vector de `N = 100.000.000` floats utilizando instrucciones escalares. Se utilizan 4 acumuladores independientes (`r1`, `r2`, `r3`, `r4`) para reducir dependencias entre instrucciones y permitir ILP:
+
+```c
+#define N 100000000
+#define Q 4
+
+float *vector = malloc(N * sizeof(float));
+// ... inicialización ...
+
+float r1 = 0, r2 = 0, r3 = 0, r4 = 0;
+int fin = N - (N % 4);
+
+for (i = 0; i < fin; i += 4) {
+    r1 += vector[i];
+    r2 += vector[i + 1];
+    r3 += vector[i + 2];
+    r4 += vector[i + 3];
+}
+
+float r = r1 + r2 + r3 + r4;
+
+// Elementos sobrantes
+for (i = fin; i < N; i++) {
+    r += vector[i];
+}
+```
+
+**Optimizaciones aplicadas:**
+- **4 acumuladores independientes** para reducir dependencias de datos (ILP).
+- **Loop unrolling** de factor 4 para reducir overhead del bucle.
+- **Manejo de elementos sobrantes** para vectores cuyo tamaño no es múltiplo de 4.
+
+---
+
+### 9.2) Solución vectorial con SSE (`9opt.c`)
+
+Se implementa la misma suma utilizando **instrucciones intrínsecas SSE** (registros de 128 bits = 4 floats por operación). Se utiliza **alineación de memoria** (`aligned_alloc(16, ...)`) para optimizar el acceso a caché.
+
+```c
+#include <xmmintrin.h>  // SSE -msse4.2
+
+#define N 100000000
+
+// Alineación a 16 bytes para SSE
+float *vector = (float *)aligned_alloc(16, N * sizeof(float));
+
+__m128 sum_vec = _mm_setzero_ps();  // Registro SSE inicializado a 0
+
+int q = 4;
+int fin = N - (N % q);
+
+for (i = 0; i < fin; i += q) {
+    __m128 data = _mm_load_ps(&vector[i]);       // Cargar 4 floats alineados
+    sum_vec = _mm_add_ps(sum_vec, data);         // Sumar en paralelo
+}
+
+// Reducir los 4 valores del registro a un escalar
+float sum_arr[q];
+_mm_store_ps(sum_arr, sum_vec);
+float suma_total = sum_arr[0] + sum_arr[1] + sum_arr[2] + sum_arr[3];
+
+// Elementos sobrantes
+for (i = fin; i < N; i++) {
+    suma_total += vector[i];
+}
+```
+
+**Optimizaciones aplicadas:**
+- **SSE 4.2** con registros de 128 bits → 4 floats procesados en paralelo.
+- **`aligned_alloc(16, ...)`** para alineación a 16 bytes, requerida por `_mm_load_ps`.
+- **Reducción horizontal** al final: se extraen los 4 acumuladores del registro SSE y se suman como escalar.
+- **Manejo de elementos sobrantes** para tamaños no múltiplos de 4.
+
+**Comando de compilación:**
+```bash
+gcc -Wall -g -msse4.2 9opt.c -o 9opt
+```
+
+---
+
+### 9.3) Comparación de rendimiento
+
+| Versión | Real | User | Sys |
+|---------|------|------|-----|
+| Escalar (`9ex.c`, `-O0`) | `0m0,790s` | `0m0,637s` | `0m0,148s` |
+| Escalar (`9ex.c`, `-O3`) | _(ver nota)_ | | |
+| Vectorial (`9opt.c`, `-O3 -msse4.2`) | `0m0,303s` | `0m0,141s` | `0m0,157s` |
+
+**Mejora:** `~0,487s` (~62% más rápido, factor de ~2.6x).
+
+**Resultado verificado:** ambas versiones producen `67108864.000000` (suma de 100.000.000 elementos con valor 1).
+
+### Análisis
+
+La versión vectorial aprovecha instrucciones SIMD (Single Instruction, Multiple Data) para procesar 4 floats simultáneamente en un registro de 128 bits. Esto reduce la cantidad de instrucciones de carga y suma en un factor de 4. La alineación de memoria garantiza que `_mm_load_ps` acceda eficientemente a la caché L3, minimizando fallos. Además, la versión escalar también utiliza 4 acumuladores independientes, lo que permite ILP; por eso la mejora no es exactamente 4x, sino ~2.6x.
 
 ---
 
