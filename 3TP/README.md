@@ -215,6 +215,7 @@ int main() {
 ```
 
 ### **8)** 🗂️ Técnica: "Uso eficiente de la caché: localidad espacial y temporal".
+✅ **[Ver solución →](soluciones.md#ejercicio-8-técnica-uso-eficiente-de-la-caché-localidad-espacial-y-temporal)**
 
 1. 🎯 Optimizar el siguiente programa buscando aumentar la localidad espacial y temporal en el acceso a datos de una matriz. Contrastar el tiempo de ejecución de la versión optimizada frente a la versión original.
 
