@@ -1,0 +1,16 @@
+uncoma20@frontend:~/3TP/7P$ cat salida_7x.txt errores_7x.txt 
+Algoritmo a ejecutar
+
+real	0m7,291s
+user	0m5,152s
+sys	0m2,136s
+uncoma20@frontend:~/3TP/7P$ cat salida_7xOpt.txt errores_7xOpt.txt 
+Algoritmo a ejecutar
+
+real	0m6,385s
+user	0m4,396s
+sys	0m1,988s
+
+
+
+la verion optimizada es aproximadamente 1s mas eficiente

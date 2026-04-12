@@ -1,0 +1,17 @@
+uncoma20@frontend:~/3TP/6P$ cat salida_6x.txt errores_6x.txt 
+Algoritmo a ejecutar
+El valor calculado es: 20242176
+
+real	0m1,499s
+user	0m1,496s
+sys	0m0,000s
+uncoma20@frontend:~/3TP/6P$ cat salida_6xOpt.txt errores_6xOpt.txt 
+Algoritmo a ejecutar
+El valor calculado es: 20242176
+
+real	0m1,049s
+user	0m1,045s
+sys	0m0,000s
+
+
+Conclusion: la expresion comun si bien genera dependencia (las variables 'a' esperan a 'd', y 'd' espera a 'c'), reduce el tiempo total medio segundo, ya que evita que cada instruccion recalcule de nuevo el valor.

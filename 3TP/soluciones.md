@@ -254,19 +254,179 @@ a+=a1+a2+a3;
 
 ## Ejercicio 6: Técnica "Extracción de subexpresiones comunes"
 
-> ⏳ Pendiente
+### Descripción
+
+Se optimiza el siguiente programa extrayendo la subexpresión común `i * i * i` que se recalcula en cada iteración del bucle interno.
+
+#### Código original (`6ex.c`)
+```c
+for (i = 0; i < 1000; i++)
+    for (j = 0; j < 1000000; j+=4) {
+        a += i * i * i + j;
+        a1 += i * i * i + j + 1;
+        a2 += i * i * i + j + 2;
+        a3 += i * i * i + j + 3;
+    }
+```
+
+#### Código optimizado (`6exOptimized.c`)
+```c
+for (i = 0; i < 1000; i++){
+    int c = i * i * i;          // extraído fuera del bucle interno
+    for (j = 0; j < 1000000; j+=4) {
+        int d = c + j;           // subexpresión común calculada una vez
+        a   += d;
+        a1  += d + 1;
+        a2  += d + 2;
+        a3  += d + 3;
+    }
+}
+```
+
+### Optimización aplicada
+
+- **`i * i * i`** se calcula una sola vez por iteración externa y se almacena en `c`.
+- **`c + j`** se calcula una sola vez por iteración interna y se almacena en `d`.
+- Se evitan **4 multiplicaciones triples** y **4 sumas redundantes** por cada iteración del bucle interno.
+
+### Resultados de ejecución
+
+| Versión | Resultado | Tiempo real |
+|---------|-----------|-------------|
+| Original | `20242176` | `0m1,499s` |
+| Optimizada | `20242176` | `0m1,049s` |
+
+**Mejora:** `~0,45s` (~30% más rápido).
+
+### Conclusión
+
+La extracción de subexpresiones comunes, si bien genera cierta dependencia (las variables `a` esperan a `d`, y `d` espera a `c`), reduce el tiempo total en aproximadamente medio segundo, ya que evita que cada instrucción recalcule de nuevo el mismo valor.
 
 ---
 
 ## Ejercicio 7: Técnica "Evitar saltos condicionales"
 
-> ⏳ Pendiente
+### Programas analizados
+
+#### Código original (`7ex.c`)
+```c
+for(i = 0; i < 900; i++)
+    for(j = 0; j < X; j++)
+        switch (i) {
+            case 0 ... 299:    m[i][j] = 0; break;
+            case 300 ... 599:  m[i][j] = 1; break;
+            default:           m[i][j] = 2; break;
+        }
+```
+
+#### Código optimizado (`7exOpt.c`)
+```c
+for(i = 0; i < 900; i++){
+    cond = (i >= 300) + (i >= 600);
+    for(j = 0; j < X; j++)
+        m[i][j] = cond;
+}
+```
+
+### Optimización aplicada
+
+Se reemplaza el `switch` con rangos por una **expresión aritmética sin saltos condicionales**:
+- `(i >= 300)` evalúa a 1 si `i >= 300`, sino 0
+- `(i >= 600)` evalúa a 1 si `i >= 600`, sino 0
+- La suma de ambas produce directamente el valor correcto: 0, 1 o 2
+
+Esto elimina los **branch mispredictions** que genera el `switch`, permitiendo que el pipeline del procesador fluya sin interrupciones.
+
+### Resultados de ejecución
+
+| Versión | Real | User | Sys |
+|---------|------|------|-----|
+| Original | `0m7,291s` | `0m5,152s` | `0m2,136s` |
+| Optimizada | `0m6,385s` | `0m4,396s` | `0m1,988s` |
+
+**Mejora:** `~0,9s` (~12% más rápido).
+
+### Conclusión
+
+El `switch` con rangos genera saltos condicionales que el procesador debe predecir. Cuando la predicción falla (branch misprediction), el pipeline se descarga y se pierde rendimiento. Al reemplazarlo por una expresión aritmética pura, se elimina por completo esta fuente de overhead, logrando una ejecución más rápida y predecible.
 
 ---
 
 ## Ejercicio 8: Técnica "Uso eficiente de la caché: localidad espacial y temporal"
 
-> ⏳ Pendiente
+### 8.1) Optimización del programa para mejorar localidad
+
+**Archivo:** [`8P/8ex.c`](8P/8ex.c)
+
+#### Código original (`solucionInicial`)
+```c
+for(j = 0; j < Y; j++)
+    for(i = 0; i < X; i++)
+        m[i][j] = i + j;
+```
+
+#### Código optimizado (`solucionOptimizada`)
+```c
+for(j = 0; j < Y; j++)
+    for(i = 0; i < X; i++)
+        m[j][i] = i + j;
+```
+
+**Optimización aplicada:** Se corrigió el patrón de acceso a la matriz. En la versión original, los bucles recorren la matriz por columnas (`m[i][j]`), lo que genera saltos de memoria aleatorios ya que C almacena arrays en orden row-major. En la versión optimizada, se accede secuencialmente (`m[j][i]`), aprovechando la **localidad espacial** y temporal de la caché.
+
+### Resultados de ejecución
+
+| Versión | Real | User | Sys |
+|---------|------|------|-----|
+| Original (acceso por columnas) | `0m45,895s` | `0m44,004s` | `0m1,876s` |
+| Optimizada (acceso por filas) | `0m3,251s` | `0m2,803s` | `0m0,444s` |
+
+**Mejora:** `~42,6s` (~93% más rápido, factor de ~14x).
+
+---
+
+### 8.2) Características del procesador del cluster
+
+| Parámetro | Valor | Comando |
+|-----------|-------|---------|
+| Memoria caché L3 | `256K` | `cat /sys/devices/system/cpu/cpu0/cache/index2/size` |
+| Línea de caché L3 | `64` bytes | `cat /sys/devices/system/cpu/cpu0/cache/index2/coherency_line_size` |
+
+---
+
+### 8.3) Cálculo analítico de fallos de caché
+
+**Datos:**
+- Matriz de `X × Y = 50000 × 10000 = 5×10⁸` elementos
+- Cada entero ocupa `4 bytes`
+- Línea de caché = `64 bytes` → `64/4 = 16` enteros por línea
+
+#### Versión original (acceso por columnas)
+
+Al recorrer por columnas (`m[i][j]` con `i` como índice interno), cada acceso salta a una fila diferente, provocando un **cache miss** en cada acceso:
+
+- **Fallos de caché:** `5×10⁸` (uno por cada elemento)
+
+#### Versión optimizada (acceso por filas)
+
+Al recorrer por filas (`m[j][i]` con `i` como índice interno), se accede secuencialmente:
+
+- Elementos por fila: `10000`
+- Fallos por fila: `10000 / 16 = 625`
+- **Fallos totales:** `50000 × 625 = 3.125×10⁷`
+
+#### Comparación
+
+| Versión | Fallos de caché L3 |
+|---------|-------------------|
+| Original | `5×10⁸` |
+| Optimizada | `3.125×10⁷` |
+
+**Reducción de fallos:** `93.75%` menos cache misses.
+
+### Conclusión
+
+El acceso secuencial a memoria (row-major en C) aprovecha la localidad espacial: al cargar una línea de caché, se traen 16 elementos contiguos que se utilizan en las siguientes iteraciones. El acceso por columnas invalida constantemente la caché, mientras que el acceso por filas maximiza los hits, resultando en una mejora de rendimiento de ~14x.
 
 ---
 

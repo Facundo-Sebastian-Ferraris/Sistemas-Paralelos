@@ -165,6 +165,7 @@ int main() {
 ```
 
 ### **6)** ✂️ Técnica: "Extracción de subexpresiones comunes".
+✅ **[Ver solución →](soluciones.md#ejercicio-6-técnica-extracción-de-subexpresiones-comunes)**
 
 Optimizar el siguiente programa extrayendo la subexpresión común. Contrastar el tiempo de ejecución de la versión optimizada frente a la versión original.
 
@@ -187,7 +188,8 @@ int main() {
 }
 ```
 
-### **7)** 🚦 Técnica: "Evitar saltos condicionales"
+### **7)** 🚦 Técnica: "Evitar saltos condicionales".
+✅ **[Ver solución →](soluciones.md#ejercicio-7-técnica-evitar-saltos-condicionales)**
 
 Optimizar el siguiente programa mediante la evitación de saltos. Contrastar el tiempo de ejecución de la versión optimizada frente a la versión original. Formular hipótesis que expliquen las diferencias observadas en los tiempos de ejecución.
 
