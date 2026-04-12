@@ -1,0 +1,40 @@
+8.1)
+Version Inicial:
+caracter ingresado a
+real	0m45,895s
+user	0m44,004s
+sys	0m1,876s
+
+
+Version Optimizada:
+caracter ingresado b
+real	0m3,251s
+user	0m2,803s
+sys	0m0,444s
+uncoma20@frontend:
+
+
+8.2)
+uncoma20@frontend:~/3TP/8P$ cat /sys/devices/system/cpu/cpu0/cache/index2/size
+256K
+uncoma20@frontend:~/3TP/8P$ cat /sys/devices/system/cpu/cpu0/cache/index2/coherency_line_size
+64
+
+
+8.3)
+Si se tiene una matriz de X * Y donde:
+	X = 50000
+	Y = 10000
+
+Se tiene un total de 5E8 elementos
+
+como es una matriz de enteros, entonces por cada linea de cache se guardan
+64/4 = 16 numeros enteros.
+
+En la version inicial, al no recorrer por filas, sino por columnas, se generan multiples saltos, haciendo que siempre se tenga fallos de cache. Por lo tanto, la cantidad de fallos sera de 5E8.
+
+En cambio si decidimos recorrer por filas, entonces se reducira significativamente los fallos, en este caso, como hay E4 elementos por fila, habra por fila E4/16 = 625 fallos, haciendo que haya un total de 5E4*625 = 3.125E7 fallos de cache.
+
+
+Realizando la comparacion con ambas versiones, se redujeron un 93.75% los fallos.
+
