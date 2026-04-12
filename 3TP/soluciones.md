@@ -534,7 +534,102 @@ La versión vectorial aprovecha instrucciones SIMD (Single Instruction, Multiple
 
 ## Ejercicio 10: Operaciones vectoriales con funciones intrínsecas
 
-> ⏳ Pendiente
+### 10.1) Solución escalar (`10ex.c`)
+
+Se recorre un vector de 100.000.000 enteros aplicando una operación condicional:
+
+```c
+for (i = 0; i < elementos; i++)
+    if (v[i] > 50000000)
+        v[i] = v[i] - 5;
+    else
+        v[i] = v[i] + 5;
+```
+
+---
+
+### 10.2) Solución vectorial con SSE (`10exOpt.c`)
+
+Se implementa la misma operación utilizando **instrucciones intrínsecas SSE** (registros de 128 bits = 4 ints por operación). Se utiliza **`posix_memalign`** para alineación de memoria a 16 bytes.
+
+La clave de esta solución es la **branchless vectorization**: en lugar de un `if/else` (que no se puede vectorizar directamente), se utiliza una **máscara de comparación** combinada con operaciones bit a bit:
+
+```c
+#include <xmmintrin.h>
+
+#define elementos 100000000
+
+int *v;
+posix_memalign((void**)&v, 16, elementos * sizeof(int));
+
+// Constantes vectoriales
+__m128i
+    umbral  = _mm_set1_epi32(50000000),
+    suma5   = _mm_set1_epi32(5),
+    resta5  = _mm_set1_epi32(-5);
+
+for (i = 0; i < fin; i += 4) {
+    __m128i
+        // Cargar 4 enteros alineados
+        datos = _mm_load_si128((__m128i*)&v[i]),
+
+        // Comparación: 0xFFFFFFFF si datos[j] > umbral, 0x00000000 si no
+        mascara = _mm_cmpgt_epi32(datos, umbral),
+
+        // Seleccionar +5 o -5 según la máscara (branchless)
+        ajuste = _mm_or_si128(
+            _mm_and_si128(mascara, resta5),
+            _mm_andnot_si128(mascara, suma5));
+
+    // Aplicar el ajuste
+    datos = _mm_add_epi32(datos, ajuste);
+
+    // Guardar resultado
+    _mm_store_si128((__m128i*)&v[i], datos);
+}
+
+// Elementos sobrantes
+for (; i < elementos; i++) {
+    v[i] = (v[i] > 50000000) ? v[i] - 5 : v[i] + 5;
+}
+```
+
+**Técnica de branchless con máscara:**
+1. `_mm_cmpgt_epi32(datos, umbral)` → produce `0xFFFFFFFF` donde la condición es verdadera, `0x00000000` donde es falsa.
+2. `_mm_and_si128(mascara, resta5)` → selecciona `-5` donde la condición es verdadera.
+3. `_mm_andnot_si128(mascara, suma5)` → selecciona `+5` donde la condición es falsa.
+4. `_mm_or_si128(...)` → combina ambos resultados en un vector de ajustes.
+5. `_mm_add_epi32(datos, ajuste)` → aplica el ajuste correcto a cada elemento.
+
+Esto elimina completamente las ramas condicionales dentro del bucle vectorizado.
+
+**Comando de compilación:**
+```bash
+gcc -Wall -g -msse4.2 10exOpt.c -o 10opt
+```
+
+---
+
+### 10.3) Comparación de rendimiento
+
+| Versión | Real | User | Sys |
+|---------|------|------|-----|
+| Escalar (`10ex.c`) | `0m1,558s` | `0m1,410s` | `0m0,144s` |
+| Vectorial (`10exOpt.c`, `-msse4.2`) | `0m0,348s` | `0m0,187s` | `0m0,155s` |
+
+**Mejora:** `~1,210s` (**~78% más rápido, factor de ~4.5x**).
+
+**Resultados verificados** (ambas versiones producen idéntica salida):
+```
+elemento 0: 5
+elemento 499999999: 50000004
+elemento 500000000: 50000005
+elemento 999999999: 99999994
+```
+
+### Análisis
+
+La mejora de ~4.5x supera el factor teórico de 4x (4 elementos por registro SSE) gracias a la **eliminación de ramas condicionales**. En la versión escalar, el `if/else` genera branch mispredictions que descargan el pipeline. En la versión vectorial, la técnica de máscara + operaciones bitwise selecciona el ajuste correcto sin ninguna rama, combinando el beneficio del SIMD con el beneficio de evitar saltos condicionales (similar al Ejercicio 7).
 
 ---
 

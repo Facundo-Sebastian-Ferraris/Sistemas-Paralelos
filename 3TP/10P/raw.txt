@@ -1,0 +1,22 @@
+uncoma20@frontend:~/3TP/10P$ cat salida_vIni.txt errores_vIni.txt && echo "" && echo "" && cat salida_vOpt.txt errores_vOpt.txt
+Algoritmo a ejecutar
+elemento 0: 5
+elemento 499999999: 50000004
+elemento 500000000: 50000005
+elemento 999999999: 99999994
+
+real	0m1,558s
+user	0m1,410s
+sys	0m0,144s
+
+
+Algoritmo a ejecutar
+elemento 0: 5
+elemento 499999999: 50000004
+elemento 500000000: 50000005
+elemento 999999999: 99999994
+
+real	0m0,348s
+user	0m0,187s
+sys	0m0,155s
+

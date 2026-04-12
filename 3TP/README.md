@@ -265,7 +265,10 @@ Se requiere implementar un programa en C que realice la suma horizontal de un ve
 *Notas sobre la compilación del programa vectorial:*
 Al compilar es necesario indicar el flag correspondiente al juego de instrucciones utilizado (por ejemplo, para avx: `-mavx`).
 
-### **10)** 🔄 Dado el siguiente código de programa que utiliza operaciones escalares, escribir su equivalente con funciones intrínsecas vectoriales. Utilizar los juegos de instrucciones disponibles que utilicen registros de mayor tamaño.
+### **10)** 🔄 Operaciones vectoriales con funciones intrínsecas.
+✅ **[Ver solución →](soluciones.md#ejercicio-10-operaciones-vectoriales-con-funciones-intrínsecas)**
+
+Dado el siguiente código de programa que utiliza operaciones escalares, escribir su equivalente con funciones intrínsecas vectoriales. Utilizar los juegos de instrucciones disponibles que utilicen registros de mayor tamaño.
 
 ```c
 #include <stdlib.h>

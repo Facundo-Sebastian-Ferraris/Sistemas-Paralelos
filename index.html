@@ -546,6 +546,13 @@
                         <td>0.303s</td>
                         <td><strong>~62% más rápido (2.6x)</strong></td>
                     </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>SIMD + Branchless</td>
+                        <td>1.558s</td>
+                        <td>0.348s</td>
+                        <td><strong>~78% más rápido (4.5x)</strong></td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -605,6 +612,13 @@
                 <li><code>9ex.c</code> - Versión escalar con 4 acumuladores independientes (ILP + loop unrolling)</li>
                 <li><code>9opt.c</code> - Versión vectorial con <code>_mm_load_ps</code>, <code>_mm_add_ps</code>, y <code>aligned_alloc(16, ...)</code></li>
             </ul>
+
+            <h4>10P - Operaciones Vectoriales con Condicionales</h4>
+            <p>Operación condicional (<code>if v[i] &gt; 50M then -5 else +5</code>) sobre 100.000.000 enteros: versión escalar vs. vectorial con <strong>branchless SIMD</strong>.</p>
+            <ul>
+                <li><code>10ex.c</code> - Versión escalar con <code>if/else</code></li>
+                <li><code>10exOpt.c</code> - Versión vectorial con máscara de comparación (<code>_mm_cmpgt_epi32</code>) + operaciones bitwise (<code>_mm_and_si128</code>, <code>_mm_andnot_si128</code>, <code>_mm_or_si128</code>) para eliminar ramas</li>
+            </ul>
             <table>
                 <thead>
                     <tr>
@@ -616,17 +630,17 @@
                 <tbody>
                     <tr>
                         <td>Escalar</td>
-                        <td><code>gcc -O0</code></td>
-                        <td>0.790s</td>
+                        <td><code>gcc</code></td>
+                        <td>1.558s</td>
                     </tr>
                     <tr>
-                        <td>Vectorial (SSE 4.2)</td>
-                        <td><code>gcc -O3 -msse4.2</code></td>
-                        <td><strong>0.303s</strong></td>
+                        <td>Vectorial (SSE + Branchless)</td>
+                        <td><code>gcc -msse4.2</code></td>
+                        <td><strong>0.348s</strong></td>
                     </tr>
                 </tbody>
             </table>
-            <p><strong>Mejora:</strong> <span class="badge badge-success">~62% más rápido (2.6x)</span></p>
+            <p><strong>Mejora:</strong> <span class="badge badge-success">~78% más rápido (4.5x)</span></p>
 
             <h3>Archivos de Documentación</h3>
             <ul>
@@ -638,7 +652,7 @@
 
             <h3>Ejercicios Pendientes</h3>
             <div class="highlight">
-                Los ejercicios <strong>10 y el ejercicio adicional</strong> (operaciones vectoriales con condicionales) están marcados como pendientes en el archivo de soluciones.
+                El <strong>ejercicio adicional</strong> (operaciones vectoriales con condicionales complejos) está marcado como pendiente en el archivo de soluciones.
             </div>
         </section>
 
