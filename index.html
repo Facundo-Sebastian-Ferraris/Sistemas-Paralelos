@@ -553,6 +553,13 @@
                         <td>0.348s</td>
                         <td><strong>~78% más rápido (4.5x)</strong></td>
                     </tr>
+                    <tr>
+                        <td>Adicional</td>
+                        <td>SIMD + Branchless</td>
+                        <td>0.034s</td>
+                        <td>0.027s</td>
+                        <td><strong>~21% más rápido (1.26x)</strong></td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -642,17 +649,49 @@
             </table>
             <p><strong>Mejora:</strong> <span class="badge badge-success">~78% más rápido (4.5x)</span></p>
 
+            <h4>Ejercicio Adicional - Operaciones Vectoriales Complejas</h4>
+            <p>Operación condicional (<code>if 2*v[i] &lt; i*10 then v[i]*2 else (v[i]-2)*(-2)</code>) sobre vector de 1.000.005 enteros generados aleatoriamente: versión escalar vs. vectorial con <strong>SSE 4.2 + branchless</strong>.</p>
+            <ul>
+                <li><code>extra/extra.c</code> - Versión escalar con <code>if/else</code></li>
+                <li><code>extra/extraVector.c</code> - Versión vectorial con máscara de comparación (<code>_mm_cmplt_epi32</code>), shift left para multiplicación por 2 (<code>_mm_slli_epi32</code>), y operaciones bitwise para eliminar ramas</li>
+            </ul>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Versión</th>
+                        <th>Compilación</th>
+                        <th>Tiempo Real</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Escalar</td>
+                        <td><code>gcc</code></td>
+                        <td>0.034s</td>
+                    </tr>
+                    <tr>
+                        <td>Vectorial (SSE + Branchless)</td>
+                        <td><code>gcc -msse4.2</code></td>
+                        <td><strong>0.027s</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><strong>Mejora:</strong> <span class="badge badge-success">~21% más rápido (1.26x)</span></p>
+            <div class="info-box">
+                <strong>Nota:</strong> La mejora menor se debe al overhead de crear el vector de índices en cada iteración y al cálculo de ambas ramas (aunque solo una se usa), compensando parcialmente el beneficio del SIMD.
+            </div>
+
             <h3>Archivos de Documentación</h3>
             <ul>
                 <li><code>README.md</code> - Especificación completa con 10 ejercicios + ejercicio adicional</li>
-                <li><code>soluciones.md</code> - Soluciones detalladas con código, benchmarks y análisis (ejercicios 1-8)</li>
+                <li><code>soluciones.md</code> - Soluciones detalladas con código, benchmarks y análisis (ejercicios 1-10 + adicional)</li>
                 <li><code>RAW.txt</code> - Resultados crudos de benchmarks</li>
                 <li><code>1P/1ex.md</code> - Referencia de niveles de optimización GCC</li>
             </ul>
 
-            <h3>Ejercicios Pendientes</h3>
-            <div class="highlight">
-                El <strong>ejercicio adicional</strong> (operaciones vectoriales con condicionales complejos) está marcado como pendiente en el archivo de soluciones.
+            <h3>Ejercicios Completos</h3>
+            <div class="info-box">
+                <strong>✅ Todos los ejercicios completos:</strong> Incluido el <strong>ejercicio adicional</strong> (operaciones vectoriales con condicionales complejos usando SSE 4.2 y técnica branchless).
             </div>
         </section>
 

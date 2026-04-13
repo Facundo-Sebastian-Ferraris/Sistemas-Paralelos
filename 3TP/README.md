@@ -296,7 +296,10 @@ int main() {
 
 ## 🎁 Ejercicio Adicional
 
-### 🔄 Dado el siguiente código de programa que utiliza operaciones escalares, escribir su equivalente con funciones intrínsecas vectoriales. Utilizar los juegos de instrucciones disponibles que utilicen registros de mayor tamaño.
+### 🔄 Operaciones vectoriales con condicionales
+✅ **[Ver solución →](soluciones.md#ejercicio-adicional-operaciones-vectoriales-con-condicionales)**
+
+Dado el siguiente código de programa que utiliza operaciones escalares, escribir su equivalente con funciones intrínsecas vectoriales. Utilizar los juegos de instrucciones disponibles que utilicen registros de mayor tamaño.
 
 ```c
 #include <stdlib.h>

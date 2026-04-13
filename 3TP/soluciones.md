@@ -635,4 +635,130 @@ La mejora de ~4.5x supera el factor teórico de 4x (4 elementos por registro SSE
 
 ## Ejercicio Adicional: Operaciones vectoriales con condicionales
 
-> ⏳ Pendiente
+### 11.1) Descripción del problema
+
+Se requiere optimizar un programa que aplica una operación condicional sobre un vector de enteros generados aleatoriamente. El programa original utiliza un `if/else` que no puede vectorizarse directamente.
+
+**Código original (`extra/extra.c`):**
+```c
+for (i = 0; i < elementos; i++) {
+    if(2 * v[i] < i * 10)
+        v[i] = v[i] * 2;
+    else
+        v[i] = (v[i] - 2) * -2;
+}
+```
+
+---
+
+### 11.2) Solución vectorial con SSE (`extra/extraVector.c`)
+
+Se implementa la misma operación utilizando **instrucciones intrínsecas SSE** (registros de 128 bits = 4 ints por operación). Se utiliza **`posix_memalign`** para alineación de memoria a 16 bytes (128 bits).
+
+La técnica clave es la **branchless vectorization**: se utiliza una **máscara de comparación** combinada con operaciones bit a bit para seleccionar entre las dos ramas sin utilizar saltos condicionales:
+
+```c
+#include <xmmintrin.h>
+#include <emmintrin.h>
+#include <smmintrin.h>
+
+#define E       1000005
+#define Size    (sizeof(int))
+#define Q       (128/Size)  // 4 elementos por registro SSE
+
+int *v;
+posix_memalign((void**)&v, Q*Size, E*Size);  // Alineación a 16 bytes
+
+// Constantes vectoriales
+__m128i
+    dosn    = _mm_set1_epi32(-2),   // -2 para el cálculo alternativo
+    diez    = _mm_set1_epi32(10);   // 10 para la comparación
+
+for (i = 0; i < fin; i += 4) {
+    __m128i
+        // Cargar 4 enteros alineados
+        datos = _mm_load_si128((__m128i *)&v[i]),
+
+        // 2 * v[i] (shift left 1 = multiplicación por 2)
+        doble = _mm_slli_epi32(datos, 1),
+
+        // i * 10 (vector de índices * 10)
+        indices   = _mm_set_epi32(i+3, i+2, i+1, i),
+        multi     = _mm_mullo_epi32(indices, diez),
+
+        // (v[i] - 2) * (-2)
+        do2aux = _mm_add_epi32(datos, dosn),
+        do2 = _mm_mullo_epi32(do2aux, dosn),
+
+        // Comparación: 0xFFFFFFFF si 2*v[i] < i*10, 0x00000000 si no
+        mascara = _mm_cmplt_epi32(doble, multi),
+
+        // Seleccionar doble o do2 según la máscara (branchless)
+        ajuste = _mm_or_si128(
+            _mm_and_si128(mascara, doble),
+            _mm_andnot_si128(mascara, do2)
+        );
+
+    // Guardar resultado
+    _mm_store_si128((__m128i*)&v[i], ajuste);
+}
+
+// Elementos sobrantes
+for (; i < E; i++) {
+    if(2 * v[i] < i * 10)
+        v[i] = v[i] * 2;
+    else
+        v[i] = (v[i] - 2) * -2;
+}
+```
+
+**Técnica de branchless con máscara:**
+1. `_mm_cmplt_epi32(doble, multi)` → produce `0xFFFFFFFF` donde `2*v[i] < i*10`, `0x00000000` donde no.
+2. `_mm_and_si128(mascara, doble)` → selecciona `2*v[i]` donde la condición es verdadera.
+3. `_mm_andnot_si128(mascara, do2)` → selecciona `(v[i]-2)*(-2)` donde la condición es falsa.
+4. `_mm_or_si128(...)` → combina ambos resultados en un vector.
+5. Se almacena directamente el resultado en el vector.
+
+**Optimizaciones aplicadas:**
+- **SSE 4.2** con registros de 128 bits → 4 enteros procesados en paralelo.
+- **`posix_memalign`** para alineación a 16 bytes, requerida por `_mm_load_si128`.
+- **Shift left** (`_mm_slli_epi32`) para multiplicación por 2 (más rápido que `_mm_mullo_epi32`).
+- **Branchless logic**: se eliminan las ramas condicionales mediante máscara de comparación.
+- **Manejo de elementos sobrantes** para tamaños no múltiplos de 4.
+
+**Comando de compilación:**
+```bash
+gcc -Wall -g -msse4.2 extra/extraVector.c -o extraVector
+```
+
+---
+
+### 11.3) Comparación de rendimiento
+
+| Versión | Real | User | Sys |
+|---------|------|------|-----|
+| Escalar (`extra.c`) | `0m0,034s` | `0m0,030s` | `0m0,000s` |
+| Vectorial (`extraVector.c`) | `0m0,027s` | `0m0,019s` | `0m0,005s` |
+
+**Mejora:** `~0,007s` (**~21% más rápido, factor de ~1.26x**).
+
+**Resultados verificados** (ambas versiones producen idéntica salida):
+```
+v[0]=       9383, v[11]=         27, v[elementos-1]=       9381
+v[0]=     -18762, v[11]=         54, v[elementos-1]=      18762
+```
+
+### Análisis
+
+La mejora de ~1.26x es menor que el factor teórico de 4x (4 elementos por registro SSE) debido a varios factores:
+
+1. **Overhead de creación de índices:** En cada iteración se debe crear el vector de índices (`_mm_set_epi32(i+3, i+2, i+1, i)`) y multiplicarlo por 10, lo cual agrega instrucciones adicionales que no existen en la versión escalar (donde `i * 10` es una operación simple).
+
+2. **Cálculo de ambas ramas:** Se calculan tanto `2*v[i]` como `(v[i]-2)*(-2)` en cada iteración, independientemente de la condición. Esto significa que se realiza más trabajo total que en la versión escalar, que solo evalúa una rama por iteración.
+
+3. **Tamaño reducido del vector:** Con solo ~1M de elementos, el vector entra completamente en la caché L3 del procesador, minimizando el impacto del acceso a memoria y haciendo que el overhead computacional sea más significativo en proporción.
+
+A pesar de estos factores, la versión vectorial logra una mejora del 21% gracias a:
+- **Procesamiento SIMD:** 4 elementos procesados simultáneamente.
+- **Eliminación de ramas:** La técnica branchless evita branch mispredictions.
+- **Shift left:** La multiplicación por 2 mediante shift es más eficiente que la multiplicación convencional.
