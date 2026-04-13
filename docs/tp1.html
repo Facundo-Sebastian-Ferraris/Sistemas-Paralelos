@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP1: Punteros y Gestión de Memoria - Soluciones</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>TP1: Punteros y Gestión de Memoria en C</h1>
+        <p>Facultad de Informática - Sistemas Paralelos 2026</p>
+    </header>
+
+    <nav class="site-nav">
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="#punteros">Punteros</a></li>
+            <li><a href="#arreglos">Arreglos</a></li>
+            <li><a href="#punteros-punteros">Punteros a Punteros</a></li>
+            <li><a href="#memoria">Memoria</a></li>
+            <li><a href="#dinamica">Dinámica</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <!-- Introduction -->
+        <section class="section">
+            <h2>📚 Descripción del TP</h2>
+            <p>Fundamentos de <strong>punteros y gestión de memoria dinámica en C</strong>. El objetivo es comprender la asignación de memoria dinámica y el direccionamiento por punteros para implementar programas utilizando estructuras de datos de gran tamaño.</p>
+        </section>
+
+        <!-- 1. Punteros -->
+        <section id="punteros" class="section">
+            <h2>1️⃣ Punteros</h2>
+            
+            <h3>Ejercicio 1.1 - Introducción a Punteros</h3>
+            <p><strong>Archivo:</strong> <code>archivo.c</code></p>
+            
+            <pre><code>int x = 10;      // Variable entera con valor 10
+int *p;          // Declaración de puntero a entero
+p = &x;          // p almacena la dirección de memoria de x</code></pre>
+
+            <div class="alert alert-info">
+                <strong>Explicación:</strong>
+                <ul>
+                    <li><code>&x</code> → Obtiene la dirección de memoria donde está almacenada <code>x</code></li>
+                    <li><code>p = &x</code> → El puntero <code>p</code> ahora contiene esa dirección</li>
+                    <li><code>*p</code> → Desreferencia el puntero, accediendo al valor almacenado en esa dirección (10)</li>
+                </ul>
+            </div>
+
+            <p><strong>Resultado esperado:</strong></p>
+            <pre><code>Dirección de x: 0x7fff... (ejemplo)
+Dirección almacenada en p: 0x7fff... (misma dirección)
+Valor de *p: 10</code></pre>
+
+            <div class="alert alert-warning">
+                <strong>⚠️ Nota:</strong> El código tiene un error en el último <code>printf</code> - usa <code>%p</code> para imprimir <code>*p</code> cuando debería usar <code>%d</code>.
+            </div>
+
+            <h3>Ejercicio 1.2 - Asignación entre Punteros</h3>
+            <p><strong>Archivo:</strong> <code>ej1-2.c</code></p>
+            
+            <p><strong>Análisis paso a paso:</strong></p>
+            <pre><code>a = 10;           // a = 10
+b = 20;           // b = 20
+x = &a;           // x apunta a a
+y = &b;           // y apunta a b
+x = y;            // x ahora apunta a b (mismo dirección que y)
+*x = 5;           // modifica el valor apuntado por x → b = 5</code></pre>
+
+            <p><strong>Resultado final:</strong></p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>a</code></td>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <td><code>b</code></td>
+                            <td>5</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="alert alert-success">
+                <strong>Conclusión:</strong> Al hacer <code>x = y</code>, ambos punteros apuntan a <code>b</code>. Por lo tanto, <code>*x = 5</code> modifica <code>b</code>, no <code>a</code>.
+            </div>
+        </section>
+
+        <!-- 2. Punteros y Arreglos -->
+        <section id="arreglos" class="section">
+            <h2>2️⃣ Punteros y Arreglos</h2>
+            
+            <h3>Ejercicio 2.1 - Notación de Punteros en Arreglos</h3>
+            <p><strong>Archivo:</strong> <code>ej2-1.c</code></p>
+            
+            <pre><code>float a[5];
+*(a+4) = 10.0;           // notación de punteros para acceder al 5º elemento
+printf("El quinto elemento es %f\n", a[4]);    // notación de arreglos para imprimir</code></pre>
+
+            <div class="alert alert-info">
+                <strong>Explicación:</strong>
+                <ul>
+                    <li><code>a</code> es un puntero al primer elemento del arreglo</li>
+                    <li><code>*(a+4)</code> accede al elemento en la posición 4 (quinto elemento, índice base 0)</li>
+                    <li>Equivale a <code>a[4]</code></li>
+                </ul>
+            </div>
+
+            <h3>Ejercicio 2.2 - Matrices y Almacenamiento en Memoria</h3>
+            <p><strong>Archivo:</strong> <code>ej2-2.c</code></p>
+            
+            <div class="alert alert-success">
+                <strong>Conclusión:</strong> Las matrices en C se almacenan en <strong>orden row-major (por filas)</strong>. Esto significa que los elementos de una fila se almacenan contiguos en memoria, y luego sigue la siguiente fila.
+            </div>
+
+            <p><strong>Ejemplo de salida:</strong></p>
+            <pre><code>a[0][0] = 0x7fff...00
+a[0][1] = 0x7fff...04
+a[0][2] = 0x7fff...08
+a[0][3] = 0x7fff...0C
+a[1][0] = 0x7fff...10    ← continúa después de la fila 0
+a[1][1] = 0x7fff...14
+...</code></pre>
+
+            <p>Cada <code>int</code> ocupa 4 bytes, por eso las direcciones incrementan de 4 en 4.</p>
+        </section>
+
+        <!-- 3. Punteros a Punteros -->
+        <section id="punteros-punteros" class="section">
+            <h2>3️⃣ Punteros a Punteros</h2>
+            
+            <h3>Ejercicio 3.1 - Indirección Múltiple</h3>
+            <p><strong>Archivo:</strong> <code>ej3-1.c</code></p>
+            
+            <p><strong>Análisis paso a paso:</strong></p>
+            <pre><code>num = 123;          // num = 123
+p1 = &num;          // p1 apunta a num
+p2 = &p1;           // p2 apunta a p1 (puntero a puntero)
+
+*p1 = num - 23;     // num = 123 - 23 = 100
+**p2 = *p1 * 2;     // **p2 accede a num → num = 100 * 2 = 200</code></pre>
+
+            <div class="alert alert-info">
+                <strong>Explicación:</strong>
+                <ul>
+                    <li><code>*p1</code> accede directamente a <code>num</code></li>
+                    <li><code>**p2</code> es equivalente a <code>*p1</code>, que es equivalente a <code>num</code></li>
+                    <li>Ambas operaciones modifican la misma variable <code>num</code></li>
+                </ul>
+            </div>
+
+            <p><strong>Resultado final:</strong> <code>Valor de num = 200</code></p>
+        </section>
+
+        <!-- 4. Organización de la Memoria -->
+        <section id="memoria" class="section">
+            <h2>4️⃣ Organización de la Memoria</h2>
+            
+            <p><em>(Ejercicio teórico - no tiene código asociado)</em></p>
+
+            <h3>Segmentos de memoria:</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>🥞 Stack</h4>
+                    <p>Variables locales, parámetros de funciones, direcciones de retorno. LIFO. Tamaño fijo (~8MB).</p>
+                </div>
+                <div class="card">
+                    <h4>🏔️ Heap</h4>
+                    <p>Memoria dinámica (<code>malloc</code>/<code>free</code>). El programador gestiona la liberación.</p>
+                </div>
+                <div class="card">
+                    <h4>🌑 BSS</h4>
+                    <p>Variables globales/estáticas no inicializadas (inicializadas en 0 por defecto).</p>
+                </div>
+                <div class="card">
+                    <h4>🌕 Data</h4>
+                    <p>Variables globales/estáticas inicializadas con valor ≠ 0.</p>
+                </div>
+                <div class="card">
+                    <h4>📜 Text</h4>
+                    <p>Código del programa (instrucciones de máquina). Solo lectura.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Asignación Dinámica de Memoria -->
+        <section id="dinamica" class="section">
+            <h2>5️⃣ Asignación Dinámica de Memoria</h2>
+            
+            <h3>Ejercicio 5.1 - malloc Básico</h3>
+            <p><strong>Archivo:</strong> <code>ej5-1.c</code></p>
+            
+            <pre><code>int *p;
+p = (int *) malloc(sizeof(int));
+*p = 50;</code></pre>
+
+            <div class="alert alert-info">
+                <strong>Explicación:</strong>
+                <ol>
+                    <li><code>int *p;</code> → declara un puntero a entero</li>
+                    <li><code>malloc(sizeof(int))</code> → reserva 4 bytes en el <strong>Heap</strong></li>
+                    <li><code>(int *)</code> → castea el <code>void*</code> retornado por malloc a <code>int*</code></li>
+                    <li><code>*p = 50;</code> → almacena el valor 50 en la memoria reservada</li>
+                </ol>
+            </div>
+
+            <div class="alert alert-warning">
+                <strong>Importante:</strong> El cast es necesario porque <code>malloc</code> retorna <code>void*</code>. El tipo de casteo determina cómo se interpretará la memoria al recorrerla (de 4 en 4 bytes para <code>int</code>, de 1 en 1 para <code>char</code>, etc.).
+            </div>
+
+            <h3>Ejercicio 5.2 - Arreglo Dinámico</h3>
+            <p><strong>Archivo:</strong> <code>ej5-2.c</code></p>
+
+            <div class="alert alert-warning">
+                <strong>⚠️ El código original tiene un error de compilación:</strong>
+                <pre><code>int p[5];           // ← p declarado como arreglo
+int *p = malloc(...); // ← ERROR: redeclaración de p</code></pre>
+            </div>
+
+            <p><strong>Corrección sugerida:</strong></p>
+            <pre><code>int *p = (int *) malloc(sizeof(int) * 5);  // reserva espacio para 5 enteros
+p[0] = 1; p[1] = 2; p[2] = 3; p[3] = 4; p[4] = 5;</code></pre>
+
+            <h3>Ejercicio 5.3 - Matriz Dinámica con Filas Unidas</h3>
+            <p><strong>Archivo:</strong> <code>ej5-3.c</code></p>
+            
+            <p><strong>Implementación con filas unidas (un único bloque contiguo):</strong></p>
+            <pre><code>int X = 3, Y = 4;
+
+// Reservar un único bloque contiguo para todos los elementos
+int *a = (int*) malloc(X * Y * sizeof(int));
+
+// Reservar arreglo de punteros para las filas
+int **x = (int**) malloc(X * sizeof(int*));
+
+// Hacer que cada fila apunte a la posición correspondiente del bloque
+for(int i = 0; i < X; i++){
+    *(x+i) = a + i*Y;
+}</code></pre>
+
+            <div class="alert alert-success">
+                <strong>Ventajas de filas unidas:</strong>
+                <ul>
+                    <li>✅ Mejor localidad espacial (acceso más rápido por caché)</li>
+                    <li>✅ Una sola llamada a <code>free()</code> para los datos</li>
+                    <li>✅ Memoria contigua (mejor para operaciones vectoriales)</li>
+                </ul>
+            </div>
+
+            <h3>Ejercicio 5.3.c) Memoria Máxima Disponible</h3>
+            
+            <p><strong>i) Comando free:</strong></p>
+            <pre><code>$ free -h</code></pre>
+            <p>Busca la columna <strong>available</strong> en la fila <strong>Mem</strong>. Ese es el espacio máximo sin usar swap.</p>
+
+            <p><strong>ii) Cálculo para matriz de double:</strong></p>
+            <pre><code>Tamaño de double = 8 bytes
+
+Si available = 7.5 GB ≈ 8,053,063,680 bytes
+
+Número máximo de elementos = 8,053,063,680 / 8 ≈ 1,006,632,960 elementos</code></pre>
+            <p>Esto equivale aproximadamente a una matriz de <strong>31,700 × 31,700</strong> elementos.</p>
+        </section>
+
+        <!-- File Index -->
+        <section class="section">
+            <h2>🔗 Índice de Archivos</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Archivo</th>
+                            <th>Ejercicio</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>archivo.c</code></td>
+                            <td>1.1</td>
+                            <td>Introducción a punteros</td>
+                        </tr>
+                        <tr>
+                            <td><code>ej1-2.c</code></td>
+                            <td>1.2</td>
+                            <td>Asignación entre punteros</td>
+                        </tr>
+                        <tr>
+                            <td><code>ej2-1.c</code></td>
+                            <td>2.1</td>
+                            <td>Arreglos y notación de punteros</td>
+                        </tr>
+                        <tr>
+                            <td><code>ej2-2.c</code></td>
+                            <td>2.2</td>
+                            <td>Matrices y almacenamiento en memoria</td>
+                        </tr>
+                        <tr>
+                            <td><code>ej3-1.c</code></td>
+                            <td>3.1</td>
+                            <td>Punteros a punteros</td>
+                        </tr>
+                        <tr>
+                            <td><code>ej5-1.c</code></td>
+                            <td>5.1</td>
+                            <td>malloc básico</td>
+                        </tr>
+                        <tr>
+                            <td><code>ej5-2.c</code></td>
+                            <td>5.2</td>
+                            <td>Arreglo dinámico (con error)</td>
+                        </tr>
+                        <tr>
+                            <td><code>ej5-3.c</code></td>
+                            <td>5.3</td>
+                            <td>Matriz dinámica con filas unidas</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>Facultad de Informática - Sistemas Paralelos 2026</p>
+    </footer>
+</body>
+</html>

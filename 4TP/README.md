@@ -101,11 +101,11 @@ Se requiere evaluar el rendimiento de la aplicación mediante un **estudio de es
 
 **Instrumentación de un programa serie para la medición de tiempos**
 
-Se provee el programa `programa1.c`, que muestra un ejemplo en el que se mide el tiempo transcurrido entre dos puntos de un programa.
+Se provee el programa [programa1.c](programa1.c), que muestra un ejemplo en el que se mide el tiempo transcurrido entre dos puntos de un programa.
 
 #### ✅ Tareas:
 
-- 🛠️ Completar el programa `programa2.c` con **mediciones de tiempo**
+- 🛠️ Completar el programa [programa2.c](programa2) con **mediciones de tiempo**
 - 🎯 Tener en cuenta que se desean realizar experimentos con **ejecuciones cortas** pero cuyos resultados sean **representativos de ejecuciones muy largas**
 - 🔮 Indicar cómo se podría estimar el tiempo para una ejecución con: **n = 1.000.000**
 

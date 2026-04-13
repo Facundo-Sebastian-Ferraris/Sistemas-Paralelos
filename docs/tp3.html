@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP3: Optimización de Alto Rendimiento - Soluciones</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>TP3: Optimización de Alto Rendimiento</h1>
+        <p>Facultad de Informática - Sistemas Paralelos 2026</p>
+    </header>
+
+    <nav class="site-nav">
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="#ej1">GCC</a></li>
+            <li><a href="#ej2">Menos Trabajo</a></li>
+            <li><a href="#ej3">Almacenamiento</a></li>
+            <li><a href="#ej4">Código Inline</a></li>
+            <li><a href="#ej5">Loop Unroll</a></li>
+            <li><a href="#ej6">Subexpresiones</a></li>
+            <li><a href="#ej7">Evitar Saltos</a></li>
+            <li><a href="#ej8">Caché</a></li>
+            <li><a href="#ej9">SIMD Suma</a></li>
+            <li><a href="#ej10">SIMD Condicional</a></li>
+            <li><a href="#extra">Adicional</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <!-- Introduction -->
+        <section class="section">
+            <h2>📚 Descripción del TP</h2>
+            <p><strong>Técnicas de optimización de código de alto rendimiento.</strong> Este es el TP más extenso, organizado en 10 partes más un ejercicio adicional. Cada ejercicio explora una técnica de optimización manual, midiendo su impacto en tiempo de ejecución y uso de memoria.</p>
+            
+            <div class="alert alert-info">
+                <strong>Nota:</strong> Compilación sin auto-optimizaciones del compilador (<code>-O0</code>) para aislar efectos manuales.
+            </div>
+        </section>
+
+        <!-- Results Summary -->
+        <section class="section">
+            <h2>📊 Resumen de Resultados</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ejercicio</th>
+                            <th>Técnica</th>
+                            <th>Original</th>
+                            <th>Optimizado</th>
+                            <th>Mejora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2.2</td>
+                            <td>float → int</td>
+                            <td>5.524s</td>
+                            <td>3.476s</td>
+                            <td><span class="badge badge-success">~37% más rápido</span></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>int → char (bool)</td>
+                            <td>2.648s, 1526 MiB</td>
+                            <td>2.144s, 381 MiB</td>
+                            <td><span class="badge badge-success">75% menos memoria</span></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Código inline</td>
+                            <td>1.765s</td>
+                            <td>0.255s</td>
+                            <td><span class="badge badge-success">~85% más rápido</span></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Loop unroll + ILP</td>
+                            <td>0.148s</td>
+                            <td>0.035s</td>
+                            <td><span class="badge badge-success">~76% más rápido</span></td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Subexpresión común</td>
+                            <td>1.499s</td>
+                            <td>1.049s</td>
+                            <td><span class="badge badge-success">~30% más rápido</span></td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Evitar ramas</td>
+                            <td>7.291s</td>
+                            <td>6.385s</td>
+                            <td><span class="badge badge-success">~12% más rápido</span></td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Localidad de caché</td>
+                            <td>45.895s</td>
+                            <td>3.251s</td>
+                            <td><span class="badge badge-success">~93% más rápido (14x)</span></td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>SIMD (SSE 4.2)</td>
+                            <td>0.790s</td>
+                            <td>0.303s</td>
+                            <td><span class="badge badge-success">~62% más rápido (2.6x)</span></td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>SIMD + Branchless</td>
+                            <td>1.558s</td>
+                            <td>0.348s</td>
+                            <td><span class="badge badge-success">~78% más rápido (4.5x)</span></td>
+                        </tr>
+                        <tr>
+                            <td>Adicional</td>
+                            <td>SIMD + Branchless</td>
+                            <td>0.034s</td>
+                            <td>0.027s</td>
+                            <td><span class="badge badge-success">~21% más rápido (1.26x)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Ejercicio 1 -->
+        <section id="ej1" class="section">
+            <h2>Ejercicio 1: Niveles de Optimización de GCC</h2>
+            
+            <h3>-O0 (por defecto)</h3>
+            <ul>
+                <li>Reduce el tiempo de compilación</li>
+                <li>Depuración produce resultados esperados</li>
+                <li>Ninguna optimización activada</li>
+            </ul>
+
+            <h3>-O2 (recomendado para producción)</h3>
+            <ul>
+                <li>Casi todas las optimizaciones que no implican trade-off tamaño/velocidad</li>
+                <li>Mayor tiempo de compilación y mejor rendimiento</li>
+                <li>Incluye todo <code>-O1</code> + flags como: <code>-falign-functions</code>, <code>-fcse-follow-jumps</code>, <code>-fgcse</code>, <code>-finline-functions</code>, <code>-fstrict-aliasing</code>, <code>-ftree-loop-vectorize</code>, <code>-ftree-pre</code>, <code>-ftree-vrp</code>, entre otros (~50 flags adicionales)</li>
+            </ul>
+
+            <h3>-O3 (máxima optimización)</h3>
+            <p>Incluye todo <code>-O2</code> +:</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Flag</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>-fgcse-after-reload</code></td>
+                            <td>Optimización GCSE después del reload</td>
+                        </tr>
+                        <tr>
+                            <td><code>-fipa-cp-clone</code></td>
+                            <td>Clonado de propagación de constantes IPA</td>
+                        </tr>
+                        <tr>
+                            <td><code>-floop-interchange</code></td>
+                            <td>Intercambio de bucles</td>
+                        </tr>
+                        <tr>
+                            <td><code>-floop-unroll-and-jam</code></td>
+                            <td>Desenrollado y fusión de bucles</td>
+                        </tr>
+                        <tr>
+                            <td><code>-fpeel-loops</code></td>
+                            <td>Pelado de bucles</td>
+                        </tr>
+                        <tr>
+                            <td><code>-fpredictive-commoning</code></td>
+                            <td>Commoning predictivo</td>
+                        </tr>
+                        <tr>
+                            <td><code>-fsplit-loops</code></td>
+                            <td>División de bucles</td>
+                        </tr>
+                        <tr>
+                            <td><code>-fsplit-paths</code></td>
+                            <td>División de caminos</td>
+                        </tr>
+                        <tr>
+                            <td><code>-ftree-loop-distribution</code></td>
+                            <td>Distribución de bucles</td>
+                        </tr>
+                        <tr>
+                            <td><code>-ftree-partial-pre</code></td>
+                            <td>PRE parcial en árboles</td>
+                        </tr>
+                        <tr>
+                            <td><code>-funswitch-loops</code></td>
+                            <td>Descondicionalización de bucles</td>
+                        </tr>
+                        <tr>
+                            <td><code>-fvect-cost-model=dynamic</code></td>
+                            <td>Modelo de costo de vectorización dinámico</td>
+                        </tr>
+                        <tr>
+                            <td><code>-fversion-loops-for-strides</code></td>
+                            <td>Versionado de bucles para strides</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Ejercicio 2 -->
+        <section id="ej2" class="section">
+            <h2>Ejercicio 2: Técnica "Hacer menos trabajo y más liviano"</h2>
+            
+            <h3>2.1) Reducción de trabajo</h3>
+            <p><strong>Archivo:</strong> <code>2Aex.c</code></p>
+            
+            <pre><code>int solucionOptima(){
+    int flag = 0;
+    int aMax = n;
+    while(!flag && i < aMax){
+        flag = complex_func(a[i]) < 55;
+        i++;
+    }
+    printf("¿Elemento encontrado? %d\n", flag);
+    return 0;
+}</code></pre>
+
+            <div class="alert alert-success">
+                <strong>Optimización aplicada:</strong> Early exit (salida temprana) - una vez que se encuentra un elemento que satisface la condición (<code>complex_func(a[i]) < 55</code>), el bucle termina, evitando iteraciones innecesarias.
+            </div>
+
+            <h3>2.2) Operaciones más livianas</h3>
+            <p><strong>Archivo:</strong> <code>2Bex.c</code></p>
+            
+            <pre><code>int solucionNueva(){
+    int i, j, a;
+
+    for(i = 0; i < 1000; i++){
+        for(j = 0; j < 1000000; j++){
+            a = i + j;
+        }
+    }
+    return a;
+}</code></pre>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Versión</th>
+                            <th>Tiempo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Solución Inicial (float)</td>
+                            <td>5,524s</td>
+                        </tr>
+                        <tr>
+                            <td>Solución Nueva (int)</td>
+                            <td>3,476s</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>Optimización aplicada:</strong> Reemplazo de operaciones de punto flotante por operaciones con enteros, que son computacionalmente menos costosas.
+            </div>
+        </section>
+
+        <!-- Ejercicio 3 -->
+        <section id="ej3" class="section">
+            <h2>Ejercicio 3: Técnica "Reducción del almacenamiento para datos"</h2>
+            
+            <h3>3.1) Diagrama de la estructura de datos</h3>
+            <p>La estructura utiliza un solo bloque de memoria para todos los elementos de la grilla, con un arreglo de punteros a filas.</p>
+
+            <div class="alert alert-success">
+                <strong>Ventajas de usar un solo bloque de memoria:</strong>
+                <ul>
+                    <li><strong>Datos alineados:</strong> La CPU accede de forma rápida y eficiente, mejorando el rendimiento.</li>
+                    <li>Menos saltos de memoria, aprovechando de mejor forma la caché y reduciendo el tiempo de ejecución.</li>
+                    <li><strong>Memoria dinámica:</strong> permite variar el tamaño de la memoria durante la ejecución.</li>
+                </ul>
+            </div>
+
+            <h3>3.2) Optimización mediante reducción del almacenamiento</h3>
+            <p><strong>Descripción:</strong> La reducción de datos consiste en achicar el size del tipo de dato ya que solo guardaremos estados booleanos. El tipo de dato mínimo es <code>char</code> que ocupa 1 byte, en vez de <code>int</code> que ocupa 4 bytes.</p>
+
+            <h3>3.3) Comparación de rendimiento y memoria</h3>
+            
+            <h4>Tiempo de ejecución</h4>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Versión</th>
+                            <th>Real</th>
+                            <th>User</th>
+                            <th>Sys</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Con <code>int</code></td>
+                            <td>0m2,648s</td>
+                            <td>0m2,034s</td>
+                            <td>0m0,612s</td>
+                        </tr>
+                        <tr>
+                            <td>Con <code>char</code></td>
+                            <td>0m2,144s</td>
+                            <td>0m1,984s</td>
+                            <td>0m0,156s</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Mejora:</strong> <span class="badge badge-success">~0,5s en tiempo real</span></p>
+
+            <h4>Uso de memoria</h4>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo de dato</th>
+                            <th>Cálculo</th>
+                            <th>Bytes</th>
+                            <th>MiB</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>int</code> (4 bytes)</td>
+                            <td>(20000²) × 4</td>
+                            <td>1.600.000.000</td>
+                            <td>~1526 MiB</td>
+                        </tr>
+                        <tr>
+                            <td><code>char</code> (1 byte)</td>
+                            <td>(20000²) × 1</td>
+                            <td>400.000.000</td>
+                            <td>~381 MiB</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Ahorro de memoria:</strong> <span class="badge badge-success">~1145 MiB (75% menos memoria)</span></p>
+        </section>
+
+        <!-- Ejercicio 4 -->
+        <section id="ej4" class="section">
+            <h2>Ejercicio 4: Técnica "Código en Línea"</h2>
+            
+            <pre><code>// Versión original con llamada a función
+int pordos(int x){
+   return x*2;
+}
+
+// Versión optimizada con código en línea
+res += (i*2);  // en lugar de res += pordos(i);</code></pre>
+
+            <h3>Resultados de ejecución (sin optimización del compilador)</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Versión</th>
+                            <th>Tiempo real</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Con llamada a función</td>
+                            <td>0m1,765s</td>
+                        </tr>
+                        <tr>
+                            <td>Con código en línea</td>
+                            <td>0m0,255s</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Diferencia:</strong> <span class="badge badge-success">1,51s a favor del código en línea</span></p>
+
+            <h3>Resultados con optimización -O3</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Versión</th>
+                            <th>Tiempo real</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Con llamada a función</td>
+                            <td>0m0,006s</td>
+                        </tr>
+                        <tr>
+                            <td>Con código en línea</td>
+                            <td>0m0,004s</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>Conclusión:</strong> Es preferible usar funciones cuando se trata de procedimientos más complejos, donde el overhead es despreciable. Para funciones pequeñas y frecuentemente llamadas, el código en línea ofrece mejor rendimiento. Con <code>-O3</code>, el compilador realiza inline automático.
+            </div>
+        </section>
+
+        <!-- Ejercicio 5 -->
+        <section id="ej5" class="section">
+            <h2>Ejercicio 5: Técnica "Desenrollado de bucles"</h2>
+            
+            <h3>Programas analizados</h3>
+            
+            <h4>Programa 1 (Original)</h4>
+            <pre><code>register int i;
+register double a = 0;
+for (i = 0; i < 40000000; i++)
+   a+= 0.0000001;</code></pre>
+
+            <h4>Programa 2 (Desenrollado de bucles)</h4>
+            <pre><code>register int i;
+register double a = 0;
+for (i = 0; i < 40000000; i+=4) {
+   a+= 0.0000001;
+   a+= 0.0000001;
+   a+= 0.0000001;
+   a+= 0.0000001;
+}</code></pre>
+
+            <h4>Programa 3 (Desenrollado + reducción de dependencias)</h4>
+            <pre><code>register int i;
+register double a = 0, a1 = 0, a2 = 0, a3 = 0;
+for (i = 0; i < 40000000; i+=4) {
+      a+= 0.0000001;
+      a1+= 0.0000001;
+      a2+= 0.0000001;
+      a3+= 0.0000001;
+}
+a+=a1+a2+a3;</code></pre>
+
+            <h3>Resultados de ejecución</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Programa</th>
+                            <th>Tiempo real</th>
+                            <th>Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Programa 1 (Original)</td>
+                            <td>0m0,148s</td>
+                            <td>Operaciones dependientes, no permite ILP</td>
+                        </tr>
+                        <tr>
+                            <td>Programa 2 (Desenrollado)</td>
+                            <td>0m0,132s</td>
+                            <td>Reduce los saltos de bucle 4 veces</td>
+                        </tr>
+                        <tr>
+                            <td>Programa 3 (Desenrollado + ILP)</td>
+                            <td>0m0,035s</td>
+                            <td>Permite paralelizar instrucciones</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="alert alert-success">
+                <strong>Análisis:</strong> El Programa 3 es el más rápido porque usa variables independientes (<code>a</code>, <code>a1</code>, <code>a2</code>, <code>a3</code>) para prevenir la dependencia de datos, permitiendo al procesador paralelizar las instrucciones (ILP - Instruction Level Parallelism).
+            </div>
+        </section>
+
+        <!-- Ejercicio 6 -->
+        <section id="ej6" class="section">
+            <h2>Ejercicio 6: Técnica "Extracción de subexpresiones comunes"</h2>
+            
+            <h3>Código optimizado</h3>
+            <pre><code>for (i = 0; i < 1000; i++){
+    int c = i * i * i;          // extraído fuera del bucle interno
+    for (j = 0; j < 1000000; j+=4) {
+        int d = c + j;           // subexpresión común calculada una vez
+        a   += d;
+        a1  += d + 1;
+        a2  += d + 2;
+        a3  += d + 3;
+    }
+}</code></pre>
+
+            <div class="alert alert-info">
+                <strong>Optimización aplicada:</strong>
+                <ul>
+                    <li><code>i * i * i</code> se calcula una sola vez por iteración externa y se almacena en <code>c</code>.</li>
+                    <li><code>c + j</code> se calcula una sola vez por iteración interna y se almacena en <code>d</code>.</li>
+                    <li>Se evitan <strong>4 multiplicaciones triples</strong> y <strong>4 sumas redundantes</strong> por cada iteración del bucle interno.</li>
+                </ul>
+            </div>
+
+            <h3>Resultados de ejecución</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Versión</th>
+                            <th>Resultado</th>
+                            <th>Tiempo real</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Original</td>
+                            <td>20242176</td>
+                            <td>0m1,499s</td>
+                        </tr>
+                        <tr>
+                            <td>Optimizada</td>
+                            <td>20242176</td>
+                            <td>0m1,049s</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Mejora:</strong> <span class="badge badge-success">~0,45s (~30% más rápido)</span></p>
+        </section>
+
+        <!-- Ejercicio 7 -->
+        <section id="ej7" class="section">
+            <h2>Ejercicio 7: Técnica "Evitar saltos condicionales"</h2>
+            
+            <h3>Código optimizado</h3>
+            <pre><code>for(i = 0; i < 900; i++){
+    cond = (i >= 300) + (i >= 600);
+    for(j = 0; j < X; j++)
+        m[i][j] = cond;
+}</code></pre>
+
+            <div class="alert alert-info">
+                <strong>Optimización aplicada:</strong> Se reemplaza el <code>switch</code> con rangos por una <strong>expresión aritmética sin saltos condicionales</strong>:
+                <ul>
+                    <li><code>(i >= 300)</code> evalúa a 1 si <code>i >= 300</code>, sino 0</li>
+                    <li><code>(i >= 600)</code> evalúa a 1 si <code>i >= 600</code>, sino 0</li>
+                    <li>La suma de ambas produce directamente el valor correcto: 0, 1 o 2</li>
+                </ul>
+            </div>
+
+            <h3>Resultados de ejecución</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Versión</th>
+                            <th>Real</th>
+                            <th>User</th>
+                            <th>Sys</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Original</td>
+                            <td>0m7,291s</td>
+                            <td>0m5,152s</td>
+                            <td>0m2,136s</td>
+                        </tr>
+                        <tr>
+                            <td>Optimizada</td>
+                            <td>0m6,385s</td>
+                            <td>0m4,396s</td>
+                            <td>0m1,988s</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Mejora:</strong> <span class="badge badge-success">~0,9s (~12% más rápido)</span></p>
+
+            <div class="alert alert-success">
+                <strong>Conclusión:</strong> El <code>switch</code> con rangos genera saltos condicionales que el procesador debe predecir. Cuando la predicción falla (branch misprediction), el pipeline se descarga. Al reemplazarlo por una expresión aritmética pura, se elimina esta fuente de overhead.
+            </div>
+        </section>
+
+        <!-- Ejercicio 8 -->
+        <section id="ej8" class="section">
+            <h2>Ejercicio 8: Técnica "Uso eficiente de la caché"</h2>
+            
+            <h3>8.1) Optimización del programa para mejorar localidad</h3>
+            
+            <h4>Código original</h4>
+            <pre><code>for(j = 0; j < Y; j++)
+    for(i = 0; i < X; i++)
+        m[i][j] = i + j;  // acceso por columnas</code></pre>
+
+            <h4>Código optimizado</h4>
+            <pre><code>for(j = 0; j < Y; j++)
+    for(i = 0; i < X; i++)
+        m[j][i] = i + j;  // acceso por filas</code></pre>
+
+            <div class="alert alert-info">
+                <strong>Optimización aplicada:</strong> Se corrigió el patrón de acceso a la matriz. En la versión original, los bucles recorren la matriz por columnas (<code>m[i][j]</code>), lo que genera saltos de memoria aleatorios ya que C almacena arrays en orden row-major. En la versión optimizada, se accede secuencialmente (<code>m[j][i]</code>), aprovechando la <strong>localidad espacial</strong> y temporal de la caché.
+            </div>
+
+            <h3>Resultados de ejecución</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Versión</th>
+                            <th>Real</th>
+                            <th>User</th>
+                            <th>Sys</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Original (acceso por columnas)</td>
+                            <td>0m45,895s</td>
+                            <td>0m44,004s</td>
+                            <td>0m1,876s</td>
+                        </tr>
+                        <tr>
+                            <td>Optimizada (acceso por filas)</td>
+                            <td>0m3,251s</td>
+                            <td>0m2,803s</td>
+                            <td>0m0,444s</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Mejora:</strong> <span class="badge badge-success">~42,6s (~93% más rápido, factor de ~14x)</span></p>
+
+            <h3>8.2) Características del procesador del cluster</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parámetro</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Memoria caché L3</td>
+                            <td><code>256K</code></td>
+                        </tr>
+                        <tr>
+                            <td>Línea de caché L3</td>
+                            <td><code>64</code> bytes</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>8.3) Cálculo analítico de fallos de caché</h3>
+            <p><strong>Datos:</strong> Matriz de 50000 × 10000 = 5×10⁸ elementos, cada entero ocupa 4 bytes, línea de caché = 64 bytes → 16 enteros por línea.</p>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Versión</th>
+                            <th>Fallos de caché L3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Original (acceso por columnas)</td>
+                            <td>5×10⁸ (uno por cada elemento)</td>
+                        </tr>
+                        <tr>
+                            <td>Optimizada (acceso por filas)</td>
+                            <td>3.125×10⁷</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Reducción de fallos:</strong> <span class="badge badge-success">93.75% menos cache misses</span></p>
+        </section>
+
+        <!-- Ejercicio 9 -->
+        <section id="ej9" class="section">
+            <h2>Ejercicio 9: Suma horizontal con instrucciones vectoriales</h2>
+            
+            <h3>9.1) Solución escalar (<code>9ex.c</code>)</h3>
+            <p>Se utilizan 4 acumuladores independientes (<code>r1</code>, <code>r2</code>, <code>r3</code>, <code>r4</code>) para reducir dependencias entre instrucciones y permitir ILP:</p>
+            <pre><code>float r1 = 0, r2 = 0, r3 = 0, r4 = 0;
+int fin = N - (N % 4);
+
+for (i = 0; i < fin; i += 4) {
+    r1 += vector[i];
+    r2 += vector[i + 1];
+    r3 += vector[i + 2];
+    r4 += vector[i + 3];
+}
+
+float r = r1 + r2 + r3 + r4;
+
+// Elementos sobrantes
+for (i = fin; i < N; i++) {
+    r += vector[i];
+}</code></pre>
+
+            <h3>9.2) Solución vectorial con SSE (<code>9opt.c</code>)</h3>
+            <pre><code>#include &lt;xmmintrin.h&gt;  // SSE -msse4.2
+
+// Alineación a 16 bytes para SSE
+float *vector = (float *)aligned_alloc(16, N * sizeof(float));
+
+__m128 sum_vec = _mm_setzero_ps();  // Registro SSE inicializado a 0
+
+for (i = 0; i < fin; i += 4) {
+    __m128 data = _mm_load_ps(&amp;vector[i]);   // Cargar 4 floats alineados
+    sum_vec = _mm_add_ps(sum_vec, data);     // Sumar en paralelo
+}
+
+// Reducir los 4 valores del registro a un escalar
+float sum_arr[4];
+_mm_store_ps(sum_arr, sum_vec);
+float suma_total = sum_arr[0] + sum_arr[1] + sum_arr[2] + sum_arr[3];
+
+// Elementos sobrantes
+for (i = fin; i < N; i++) {
+    suma_total += vector[i];
+}</code></pre>
+
+            <h3>9.3) Comparación de rendimiento</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Versión</th>
+                            <th>Real</th>
+                            <th>User</th>
+                            <th>Sys</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Escalar (<code>9ex.c</code>, <code>-O0</code>)</td>
+                            <td>0m0,790s</td>
+                            <td>0m0,637s</td>
+                            <td>0m0,148s</td>
+                        </tr>
+                        <tr>
+                            <td>Vectorial (<code>9opt.c</code>, <code>-O3 -msse4.2</code>)</td>
+                            <td>0m0,303s</td>
+                            <td>0m0,141s</td>
+                            <td>0m0,157s</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Mejora:</strong> <span class="badge badge-success">~0,487s (~62% más rápido, factor de ~2.6x)</span></p>
+
+            <div class="alert alert-info">
+                <strong>Análisis:</strong> La versión vectorial aprovecha instrucciones SIMD (Single Instruction, Multiple Data) para procesar 4 floats simultáneamente en un registro de 128 bits. La versión escalar también utiliza 4 acumuladores independientes, lo que permite ILP; por eso la mejora no es exactamente 4x, sino ~2.6x.
+            </div>
+        </section>
+
+        <!-- Ejercicio 10 -->
+        <section id="ej10" class="section">
+            <h2>Ejercicio 10: Operaciones vectoriales con funciones intrínsecas</h2>
+            
+            <h3>10.1) Solución escalar (<code>10ex.c</code>)</h3>
+            <pre><code>for (i = 0; i < elementos; i++)
+    if (v[i] > 50000000)
+        v[i] = v[i] - 5;
+    else
+        v[i] = v[i] + 5;</code></pre>
+
+            <h3>10.2) Solución vectorial con SSE (<code>10exOpt.c</code>)</h3>
+            <p>La clave es la <strong>branchless vectorization</strong>: en lugar de un <code>if/else</code>, se utiliza una <strong>máscara de comparación</strong> combinada con operaciones bit a bit:</p>
+            <pre><code>__m128i
+    umbral  = _mm_set1_epi32(50000000),
+    suma5   = _mm_set1_epi32(5),
+    resta5  = _mm_set1_epi32(-5);
+
+for (i = 0; i < fin; i += 4) {
+    __m128i
+        datos = _mm_load_si128((__m128i*)&amp;v[i]),
+        mascara = _mm_cmpgt_epi32(datos, umbral),
+        ajuste = _mm_or_si128(
+            _mm_and_si128(mascara, resta5),
+            _mm_andnot_si128(mascara, suma5));
+    datos = _mm_add_epi32(datos, ajuste);
+    _mm_store_si128((__m128i*)&amp;v[i], datos);
+}</code></pre>
+
+            <div class="alert alert-info">
+                <strong>Técnica de branchless con máscara:</strong>
+                <ol>
+                    <li><code>_mm_cmpgt_epi32(datos, umbral)</code> → produce <code>0xFFFFFFFF</code> donde la condición es verdadera, <code>0x00000000</code> donde es falsa.</li>
+                    <li><code>_mm_and_si128(mascara, resta5)</code> → selecciona <code>-5</code> donde la condición es verdadera.</li>
+                    <li><code>_mm_andnot_si128(mascara, suma5)</code> → selecciona <code>+5</code> donde la condición es falsa.</li>
+                    <li><code>_mm_or_si128(...)</code> → combina ambos resultados en un vector de ajustes.</li>
+                </ol>
+            </div>
+
+            <h3>10.3) Comparación de rendimiento</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Versión</th>
+                            <th>Real</th>
+                            <th>User</th>
+                            <th>Sys</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Escalar (<code>10ex.c</code>)</td>
+                            <td>0m1,558s</td>
+                            <td>0m1,410s</td>
+                            <td>0m0,144s</td>
+                        </tr>
+                        <tr>
+                            <td>Vectorial (<code>10exOpt.c</code>, <code>-msse4.2</code>)</td>
+                            <td>0m0,348s</td>
+                            <td>0m0,187s</td>
+                            <td>0m0,155s</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Mejora:</strong> <span class="badge badge-success">~1,210s (~78% más rápido, factor de ~4.5x)</span></p>
+
+            <div class="alert alert-success">
+                <strong>Análisis:</strong> La mejora de ~4.5x supera el factor teórico de 4x gracias a la <strong>eliminación de ramas condicionales</strong>. En la versión escalar, el <code>if/else</code> genera branch mispredictions. En la versión vectorial, la técnica de máscara + operaciones bitwise selecciona el ajuste correcto sin ninguna rama.
+            </div>
+        </section>
+
+        <!-- Ejercicio Adicional -->
+        <section id="extra" class="section">
+            <h2>Ejercicio Adicional: Operaciones vectoriales con condicionales</h2>
+            
+            <h3>Descripción del problema</h3>
+            <p>Se requiere optimizar un programa que aplica una operación condicional sobre un vector de enteros generados aleatoriamente:</p>
+            <pre><code>for (i = 0; i < elementos; i++) {
+    if(2 * v[i] < i * 10)
+        v[i] = v[i] * 2;
+    else
+        v[i] = (v[i] - 2) * -2;
+}</code></pre>
+
+            <h3>Solución vectorial con SSE (<code>extra/extraVector.c</code>)</h3>
+            <pre><code>__m128i
+    dosn    = _mm_set1_epi32(-2),
+    diez    = _mm_set1_epi32(10);
+
+for (i = 0; i < fin; i += 4) {
+    __m128i
+        datos = _mm_load_si128((__m128i *)&amp;v[i]),
+        doble = _mm_slli_epi32(datos, 1),
+        indices   = _mm_set_epi32(i+3, i+2, i+1, i),
+        multi     = _mm_mullo_epi32(indices, diez),
+        do2aux = _mm_add_epi32(datos, dosn),
+        do2 = _mm_mullo_epi32(do2aux, dosn),
+        mascara = _mm_cmplt_epi32(doble, multi),
+        ajuste = _mm_or_si128(
+            _mm_and_si128(mascara, doble),
+            _mm_andnot_si128(mascara, do2)
+        );
+    _mm_store_si128((__m128i*)&amp;v[i], ajuste);
+}</code></pre>
+
+            <h3>Comparación de rendimiento</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Versión</th>
+                            <th>Real</th>
+                            <th>User</th>
+                            <th>Sys</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Escalar (<code>extra.c</code>)</td>
+                            <td>0m0,034s</td>
+                            <td>0m0,030s</td>
+                            <td>0m0,000s</td>
+                        </tr>
+                        <tr>
+                            <td>Vectorial (<code>extraVector.c</code>)</td>
+                            <td>0m0,027s</td>
+                            <td>0m0,019s</td>
+                            <td>0m0,005s</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Mejora:</strong> <span class="badge badge-success">~0,007s (~21% más rápido, factor de ~1.26x)</span></p>
+
+            <div class="alert alert-warning">
+                <strong>Análisis:</strong> La mejora menor se debe a:
+                <ol>
+                    <li><strong>Overhead de creación de índices:</strong> En cada iteración se debe crear el vector de índices (<code>_mm_set_epi32(i+3, i+2, i+1, i)</code>) y multiplicarlo por 10.</li>
+                    <li><strong>Cálculo de ambas ramas:</strong> Se calculan tanto <code>2*v[i]</code> como <code>(v[i]-2)*(-2)</code> en cada iteración.</li>
+                    <li><strong>Tamaño reducido del vector:</strong> Con solo ~1M de elementos, el vector entra completamente en la caché L3.</li>
+                </ol>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>Facultad de Informática - Sistemas Paralelos 2026</p>
+    </footer>
+</body>
+</html>

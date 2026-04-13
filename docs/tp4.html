@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP4: Evaluación de Rendimiento - Documentación</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>TP4: Evaluación de Rendimiento</h1>
+        <p>Facultad de Informática - Sistemas Paralelos 2026</p>
+    </header>
+
+    <nav class="site-nav">
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="#objetivos">Objetivos</a></li>
+            <li><a href="#julia">Julia Set</a></li>
+            <li><a href="#escalabilidad-fuerte">Escalabilidad Fuerte</a></li>
+            <li><a href="#escalabilidad-debil">Escalabilidad Débil</a></li>
+            <li><a href="#instrumentacion">Instrumentación</a></li>
+            <li><a href="#aceleracion">Aceleración</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <!-- Introduction -->
+        <section class="section">
+            <h2>📚 Descripción del TP</h2>
+            <p><strong>Evaluación de rendimiento de aplicaciones paralelas</strong> usando OpenMP. Se enfoca en instrumentación para medición de tiempo, escalabilidad fuerte y escalabilidad débil.</p>
+            
+            <div class="alert alert-info">
+                <strong>⚠️ Importante:</strong> OpenMP solo funciona en máquinas de memoria compartida; por lo tanto, su uso se restringe a un <strong>solo nodo del clúster</strong>.
+            </div>
+        </section>
+
+        <!-- Objetivos -->
+        <section id="objetivos" class="section">
+            <h2>🎯 Objetivos de la práctica</h2>
+            <ul>
+                <li>🛠️ <strong>Instrumentar aplicaciones</strong> para realizar mediciones temporales</li>
+                <li>📈 <strong>Evaluar el rendimiento</strong> de aplicaciones paralelas: métricas, escalabilidad fuerte y débil</li>
+            </ul>
+        </section>
+
+        <!-- Julia Set -->
+        <section id="julia" class="section">
+            <h2>1️⃣ Programa: Conjuntos de Julia con OpenMP</h2>
+            
+            <p>El programa calcula <strong>"conjuntos de Julia"</strong>. Los conjuntos de Julia son una familia de conjuntos fractales que se obtienen al estudiar el comportamiento de los números complejos al ser iterados por una función holomorfa.</p>
+
+            <div class="alert alert-info">
+                <strong>Modelo de ejecución:</strong> OpenMP consiste en lanzar un <strong>único proceso</strong> que a su vez lanzará <strong>múltiples hilos de ejecución</strong>.
+            </div>
+
+            <h3>Compilación</h3>
+            <pre><code>$ gcc -fopenmp -O3 julia.c -o julia</code></pre>
+
+            <h3>Parámetros</h3>
+            <p>El programa tiene dos parámetros: <strong>alto</strong> y <strong>ancho</strong> de la imagen. Por ejemplo:</p>
+            <pre><code>$ ./julia 10000 2000</code></pre>
+            <p>La imagen tendrá <strong>10.000 filas por 2.000 columnas</strong>.</p>
+
+            <div class="alert alert-info">
+                <strong>📐 Cómputo:</strong> El cómputo requerido para procesar todas las celdas de la matriz es <strong>proporcional al número de celdas</strong>.
+            </div>
+
+            <h3>Script de referencia</h3>
+            <pre><code>height=2000
+width=1000
+
+listOfCores="1 $(seq 2 2 8)"
+
+for cores in $listOfCores; do
+   echo Experimento con cores: $cores
+   export OMP_NUM_THREADS=$cores
+   ./julia $height $width
+   echo -------------------------------
+done</code></pre>
+
+            <div class="alert alert-info">
+                <strong>📌 Nota:</strong> La variable de entorno <code>OMP_NUM_THREADS</code> es utilizada para indicar, al entorno de ejecución de OpenMP, el <strong>número de hilos a utilizar</strong>.
+            </div>
+        </section>
+
+        <!-- Escalabilidad Fuerte -->
+        <section id="escalabilidad-fuerte" class="section">
+            <h2>📊 Ejercicio 1.i: Escalabilidad Fuerte</h2>
+            
+            <p>Se requiere evaluar el rendimiento de la aplicación mediante un <strong>estudio de escalabilidad fuerte</strong>.</p>
+
+            <h3>Configuración</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Cantidad de cores</h4>
+                    <p><strong>2, 4, 6, 8, 10, ..., y hasta el número total de cores del nodo seleccionado</strong></p>
+                </div>
+                <div class="card">
+                    <h4>Problema</h4>
+                    <p><strong>alto 240.000 y ancho 2.000</strong> (tamaño fijo)</p>
+                </div>
+            </div>
+
+            <h3>Requerimientos</h3>
+            <ul>
+                <li><strong>a)</strong> 📜 Escribir el script utilizado para la ejecución de los experimentos</li>
+                <li><strong>b)</strong> 📈 Graficar la curva del <strong>Tiempo de ejecución</strong></li>
+                <li><strong>c)</strong> 🚀 Graficar la curva del <strong>Speedup</strong> (indicar también el speedup ideal/lineal)</li>
+                <li><strong>d)</strong> 📊 Graficar la curva de la <strong>Eficiencia Paralela</strong></li>
+                <li><strong>e)</strong> 📝 Describir los resultados</li>
+            </ul>
+
+            <div class="alert alert-warning">
+                <strong>📌 Escalabilidad fuerte:</strong> El tamaño del problema se mantiene <strong>fijo</strong> mientras se varía la cantidad de procesadores. Se busca observar cómo mejora el tiempo de ejecución al agregar más recursos.
+            </div>
+        </section>
+
+        <!-- Escalabilidad Débil -->
+        <section id="escalabilidad-debil" class="section">
+            <h2>📈 Ejercicio 1.ii: Escalabilidad Débil</h2>
+            
+            <p>Se requiere evaluar el rendimiento de la aplicación mediante un <strong>estudio de escalabilidad débil</strong>.</p>
+
+            <h3>Configuración</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>Cantidad de cores</h4>
+                    <p><strong>2, 4, 6, 8, 10, ..., y hasta el número total de cores del nodo seleccionado</strong></p>
+                </div>
+                <div class="card">
+                    <h4>Problema</h4>
+                    <p><strong>alto 8.000 y ancho 2.000 por core</strong> (tamaño crece con cores)</p>
+                </div>
+            </div>
+
+            <h3>Requerimientos</h3>
+            <ul>
+                <li><strong>a)</strong> 📜 Escribir el script que incluya el <strong>cálculo del tamaño del problema</strong> (alto y ancho) dependiente del número de cores de cada experimento</li>
+                <li><strong>b)</strong> 📈 Graficar la curva del <strong>Tiempo de ejecución</strong></li>
+                <li><strong>c)</strong> 📝 Describir los resultados</li>
+            </ul>
+
+            <div class="alert alert-info">
+                <strong>💡 Ayuda:</strong> para simplificar el cálculo, dejar fijo el ancho e ir variando la altura.
+            </div>
+
+            <div class="alert alert-warning">
+                <strong>📌 Escalabilidad débil:</strong> El tamaño del problema <strong>crece proporcionalmente</strong> con la cantidad de procesadores. Se busca observar si el sistema mantiene el rendimiento al aumentar tanto los recursos como la carga de trabajo.
+            </div>
+        </section>
+
+        <!-- Instrumentación -->
+        <section id="instrumentacion" class="section">
+            <h2>2️⃣ Instrumentación de un Programa Serie</h2>
+            
+            <p><strong>Instrumentación de un programa serie para la medición de tiempos</strong></p>
+
+            <p>Se provee el programa <code>programa1.c</code>, que muestra un ejemplo en el que se mide el tiempo transcurrido entre dos puntos de un programa.</p>
+
+            <h3>Tareas</h3>
+            <ul>
+                <li>🛠️ Completar el programa <code>programa2.c</code> con <strong>mediciones de tiempo</strong></li>
+                <li>🎯 Tener en cuenta que se desean realizar experimentos con <strong>ejecuciones cortas</strong> pero cuyos resultados sean <strong>representativos de ejecuciones muy largas</strong></li>
+                <li>🔮 Indicar cómo se podría estimar el tiempo para una ejecución con: <strong>n = 1.000.000</strong></li>
+            </ul>
+        </section>
+
+        <!-- Aceleración -->
+        <section id="aceleracion" class="section">
+            <h2>3️⃣ Cálculo de Aceleración</h2>
+            
+            <p>Para los <strong>ejercicios 8 y 10 del TP3</strong>, calcular la <strong>aceleración</strong> de los programas optimizados frente a los programas sin optimizar.</p>
+
+            <h3>Requerimientos</h3>
+            <ul>
+                <li>⚡ Calcular la <strong>aceleración</strong> (speedup) de los programas optimizados</li>
+                <li>📊 Comparar con los programas sin optimizar</li>
+            </ul>
+
+            <div class="alert alert-info">
+                <strong>📐 Fórmula del Speedup:</strong>
+                <pre><code>Speedup = T_original / T_optimizado</code></pre>
+                Donde <code>T</code> es el tiempo de ejecución.
+            </div>
+
+            <h3>Resultados del TP3</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ejercicio</th>
+                            <th>Técnica</th>
+                            <th>Original</th>
+                            <th>Optimizado</th>
+                            <th>Speedup</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>8</td>
+                            <td>Localidad de caché</td>
+                            <td>45.895s</td>
+                            <td>3.251s</td>
+                            <td><strong>14.1x</strong></td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>SIMD + Branchless</td>
+                            <td>1.558s</td>
+                            <td>0.348s</td>
+                            <td><strong>4.5x</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Estado del TP -->
+        <section class="section">
+            <h2>📋 Estado del TP</h2>
+            <div class="alert alert-warning">
+                <strong>⏳ En Progreso:</strong> Este trabajo práctico está actualmente en desarrollo. La documentación aquí contenida corresponde a los enunciados y requisitos del TP.
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>Facultad de Informática - Sistemas Paralelos 2026</p>
+    </footer>
+</body>
+</html>

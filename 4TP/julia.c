@@ -6,7 +6,7 @@
 int main ( );
 unsigned char *julia_set ( int w, int h, float xl, float xr, float yb, float yt );
 int julia ( int w, int h, float xl, float xr, float yb, float yt, int i, int j );
-//void tga_write ( int w, int h, unsigned char rgb[], char *filename );
+void tga_write ( int w, int h, unsigned char rgb[], char *filename );
 
 /******************************************************************************/
 

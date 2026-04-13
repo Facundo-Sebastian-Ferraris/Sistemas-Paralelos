@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemas Paralelos 2026 - Trabajos Prácticos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>🖥️ Sistemas Paralelos 2026</h1>
+        <p>Facultad de Informática - Trabajos Prácticos</p>
+    </header>
+
+    <nav class="site-nav">
+        <ul>
+            <li><a href="#overview">Inicio</a></li>
+            <li><a href="#tp1">TP1</a></li>
+            <li><a href="#tp2">TP2</a></li>
+            <li><a href="#tp3">TP3</a></li>
+            <li><a href="#tp4">TP4</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <!-- Overview Section -->
+        <section id="overview" class="section">
+            <h2>📚 Bienvenido</h2>
+            <p>Este sitio contiene la documentación completa de los Trabajos Prácticos de la asignatura <strong>Sistemas Paralelos</strong> del ciclo lectivo 2026.</p>
+            
+            <div class="alert alert-info">
+                <strong>📅 Período:</strong> Marzo - Junio 2026
+            </div>
+
+            <h3>Tecnologías y Conceptos Clave</h3>
+            <div class="grid">
+                <div class="card">
+                    <h4>🔧 C (Punteros, malloc)</h4>
+                    <p>Punteros y gestión de memoria dinámica en C</p>
+                </div>
+                <div class="card">
+                    <h4>🖥️ Clusters & SLURM</h4>
+                    <p>Uso de clusters con gestor de carga de trabajo</p>
+                </div>
+                <div class="card">
+                    <h4>⚡ Optimización</h4>
+                    <p>Técnicas de optimización de alto rendimiento</p>
+                </div>
+                <div class="card">
+                    <h4>📊 OpenMP & MPI</h4>
+                    <p>Memoria compartida y distribuida</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TP1 Card -->
+        <section id="tp1" class="section">
+            <h2>TP1: Punteros y Gestión de Memoria en C <span class="badge badge-success">Completo</span></h2>
+            <p>Fundamentos de <strong>punteros y gestión de memoria dinámica en C</strong>. El objetivo es comprender la asignación de memoria dinámica y el direccionamiento por punteros para implementar programas utilizando estructuras de datos de gran tamaño.</p>
+            
+            <h3>Temas Cubiertos</h3>
+            <ul>
+                <li>Punteros básicos y operadores de dirección/indirección</li>
+                <li>Punteros y arreglos (notación de punteros)</li>
+                <li>Punteros a punteros (indirección múltiple)</li>
+                <li>Organización de memoria (Stack, Heap, BSS, Data, Text)</li>
+                <li>Asignación dinámica de memoria (malloc/free)</li>
+            </ul>
+
+            <a href="tp1.html" class="badge badge-info">Ver Soluciones Completas →</a>
+        </section>
+
+        <!-- TP2 Card -->
+        <section id="tp2" class="section">
+            <h2>TP2: Uso de un Cluster <span class="badge badge-success">Completo</span></h2>
+            <p>Uso práctico del <strong>cluster III-LIDI</strong> (IP: 163.10.34.49) utilizando el gestor de carga de trabajo <strong>SLURM</strong>. Se enfoca en transferencia de archivos SSH/SCP, envío de trabajos, gestión de nodos e inspección de recursos.</p>
+            
+            <h3>Temas Cubiertos</h3>
+            <ul>
+                <li>Acceso al cluster via SSH</li>
+                <li>Gestión de archivos con SCP</li>
+                <li>Inspección de recursos con sinfo</li>
+                <li>Envío de trabajos con sbatch</li>
+                <li>Estados de trabajos y cancelación</li>
+                <li>Detalle de recursos de nodos</li>
+            </ul>
+
+            <a href="tp2.html" class="badge badge-info">Ver Soluciones Completas →</a>
+        </section>
+
+        <!-- TP3 Card -->
+        <section id="tp3" class="section">
+            <h2>TP3: Optimización de Alto Rendimiento <span class="badge badge-success">Completo</span></h2>
+            <p><strong>Técnicas de optimización de código de alto rendimiento.</strong> Este es el TP más extenso, organizado en 10 partes más un ejercicio adicional. Cada ejercicio explora una técnica de optimización manual, midiendo su impacto en tiempo de ejecución y uso de memoria.</p>
+            
+            <h3>Resultados Medidos</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ejercicio</th>
+                            <th>Técnica</th>
+                            <th>Mejora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2.2</td>
+                            <td>float → int</td>
+                            <td><strong>~37% más rápido</strong></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>int → char (bool)</td>
+                            <td><strong>75% menos memoria</strong></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Código inline</td>
+                            <td><strong>~85% más rápido</strong></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Loop unroll + ILP</td>
+                            <td><strong>~76% más rápido</strong></td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Subexpresión común</td>
+                            <td><strong>~30% más rápido</strong></td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Evitar ramas</td>
+                            <td><strong>~12% más rápido</strong></td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Localidad de caché</td>
+                            <td><strong>~93% más rápido (14x)</strong></td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>SIMD (SSE 4.2)</td>
+                            <td><strong>~62% más rápido (2.6x)</strong></td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>SIMD + Branchless</td>
+                            <td><strong>~78% más rápido (4.5x)</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Adicional</td>
+                            <td>SIMD + Branchless</td>
+                            <td><strong>~21% más rápido (1.26x)</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <a href="tp3.html" class="badge badge-info">Ver Soluciones Completas →</a>
+        </section>
+
+        <!-- TP4 Card -->
+        <section id="tp4" class="section">
+            <h2>TP4: Evaluación de Rendimiento <span class="badge badge-info">En Progreso</span></h2>
+            <p><strong>Evaluación de rendimiento de aplicaciones paralelas</strong> usando OpenMP. Se enfoca en instrumentación para medición de tiempo, escalabilidad fuerte y escalabilidad débil.</p>
+            
+            <h3>Temas Cubiertos</h3>
+            <ul>
+                <li>Programa Julia Set con OpenMP</li>
+                <li>Escalabilidad fuerte (tamaño de problema fijo)</li>
+                <li>Escalabilidad débil (problema crece con cores)</li>
+                <li>Instrumentación de programas para medición de tiempos</li>
+                <li>Cálculo de aceleración (speedup)</li>
+            </ul>
+
+            <a href="tp4.html" class="badge badge-info">Ver Documentación →</a>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>Facultad de Informática - Sistemas Paralelos 2026</p>
+    </footer>
+</body>
+</html>

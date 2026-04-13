@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP2: Uso de un Cluster - Soluciones</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <h1>TP2: Uso de un Cluster</h1>
+        <p>Facultad de Informática - Sistemas Paralelos 2026</p>
+    </header>
+
+    <nav class="site-nav">
+        <ul>
+            <li><a href="index.html">🏠 Inicio</a></li>
+            <li><a href="#recursos">Recursos</a></li>
+            <li><a href="#trabajos">Trabajos</a></li>
+            <li><a href="#estados">Estados</a></li>
+            <li><a href="#detalle-nodos">Nodos</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <!-- Introduction -->
+        <section class="section">
+            <h2>📚 Descripción del TP</h2>
+            <p>Uso práctico del <strong>cluster III-LIDI</strong> (IP: 163.10.34.49) utilizando el gestor de carga de trabajo <strong>SLURM</strong>. Se enfoca en transferencia de archivos SSH/SCP, envío de trabajos, gestión de nodos e inspección de recursos.</p>
+        </section>
+
+        <!-- Punto 3: Recursos del Cluster -->
+        <section id="recursos" class="section">
+            <h2>📊 Punto 3: Recursos del Cluster</h2>
+            
+            <h3>3.1) Comando: <code>sinfo</code> con formato personalizado</h3>
+            <pre><code>$ sinfo -o '%9P %5D %7X %5Y %4c %7Z %10N %11e'</code></pre>
+
+            <p><strong>Salida obtenida:</strong></p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>PARTITION</th>
+                            <th>NODES</th>
+                            <th>SOCKETS</th>
+                            <th>CORES</th>
+                            <th>CPUS</th>
+                            <th>THREADS</th>
+                            <th>NODELIST</th>
+                            <th>FREE_MEM</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Blade*</strong></td>
+                            <td>16</td>
+                            <td>2</td>
+                            <td>4</td>
+                            <td>8</td>
+                            <td>1</td>
+                            <td>nodo[1-16]</td>
+                            <td>1989-6013</td>
+                        </tr>
+                        <tr>
+                            <td><strong>XeonPHI</strong></td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>64</td>
+                            <td>64</td>
+                            <td>1</td>
+                            <td>XeonPHI</td>
+                            <td>N/A</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GPUS</strong></td>
+                            <td>2</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>GPU[1-2]</td>
+                            <td>N/A</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>📌 Observaciones:</strong>
+                <ul>
+                    <li><strong>Blade*</strong>: Es la partición por defecto (indicada por el <code>*</code>), cuenta con <strong>16 nodos</strong>, cada uno con <strong>2 sockets</strong>, <strong>4 cores por socket</strong>, <strong>8 CPUs totales</strong> y <strong>1 thread por core</strong>. La memoria libre varía entre <strong>1989 MB y 6013 MB</strong>.</li>
+                    <li><strong>XeonPHI</strong>: Partición con un solo nodo especializado, con <strong>64 cores</strong> y <strong>64 CPUs</strong>.</li>
+                    <li><strong>GPUS</strong>: Partición con <strong>2 nodos</strong> con GPU, configuración mínima de <strong>1 core y 1 CPU</strong>.</li>
+                </ul>
+            </div>
+
+            <h3>3.2) Comando: Estado de los nodos</h3>
+            <pre><code>$ sinfo -o '%9P %10N %t'</code></pre>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nodo</th>
+                            <th>Estado</th>
+                            <th>Significado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>nodo[1-16]</code></td>
+                            <td><strong>idle</strong></td>
+                            <td>✅ Disponibles y listos para ejecutar trabajos</td>
+                        </tr>
+                        <tr>
+                            <td><code>XeonPHI</code></td>
+                            <td><strong>down*</strong></td>
+                            <td>❌ Fuera de servicio (el <code>*</code> indica que el estado fue establecido por un administrador)</td>
+                        </tr>
+                        <tr>
+                            <td><code>GPU[1-2]</code></td>
+                            <td><strong>down*</strong></td>
+                            <td>❌ Fuera de servicio (marcado por administrador)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="alert alert-success">
+                <strong>📌 Conclusión:</strong> Solo los <strong>16 nodos de la partición Blade</strong> están operativos y disponibles para ejecutar trabajos.
+            </div>
+        </section>
+
+        <!-- Punto 4: Lanzar Trabajos -->
+        <section id="trabajos" class="section">
+            <h2>🚀 Punto 4: Lanzar Trabajos a Ejecución</h2>
+            
+            <h3>4.d) Explicación del script <code>launch_serie</code></h3>
+            <pre><code>#!/bin/bash
+#SBATCH -N 1                    # 📦 Indica que se requiere 1 nodo para el trabajo
+#SBATCH --exclusive             # 🔒 El nodo será de uso exclusivo
+#SBATCH --partition=Blade       # 🎯 Especifica partición "Blade"
+#SBATCH -o salida.txt           # 📄 Redirige salida estándar
+#SBATCH -e errores.txt          # ⚠️ Redirige mensajes de error
+
+echo Iniciando el programa
+./serie
+echo Fin del programa</code></pre>
+
+            <h3>4.e) Resultados de la ejecución</h3>
+            <div class="alert alert-info">
+                <strong>📍 Nodo y Core utilizados:</strong>
+                <ul>
+                    <li><strong>Nodo:</strong> <code>nodo1</code></li>
+                    <li><strong>Core:</strong> <code>7</code></li>
+                </ul>
+            </div>
+
+            <p><strong>Código <code>serie.c</code>:</strong></p>
+            <pre><code>#define _GNU_SOURCE
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sched.h&gt;
+
+int main( int argc, char *argv[]) {
+   char hostname[128];
+   gethostname(hostname, sizeof(hostname));
+   printf("Ejecutando en nodo %s, core %d\n", hostname, sched_getcpu());
+   return 0;
+}</code></pre>
+
+            <div class="alert alert-info">
+                <strong>🎯 Propósito:</strong> Identificar exactamente en qué recurso físico del cluster se ejecutó el trabajo.
+                <ul>
+                    <li><code>gethostname()</code> 🏷️ → Obtiene el nombre del host (nodo)</li>
+                    <li><code>sched_getcpu()</code> 🔢 → Obtiene el número de core asignado por el planificador</li>
+                </ul>
+            </div>
+
+            <h3>4.f) Ejecución en nodo específico diferente</h3>
+            <p>Se seleccionó <strong>nodo16</strong> agregando la directiva:</p>
+            <pre><code>#SBATCH --nodelist=nodo16</code></pre>
+
+            <div class="alert alert-success">
+                <strong>✅ Resultado:</strong> El trabajo se ejecutó en <strong>nodo16, core 2</strong>
+            </div>
+
+            <h3>4.g) Opciones fuera del script</h3>
+            <pre><code>$ sbatch --nodelist=nodo13 launch_serie</code></pre>
+
+            <div class="alert alert-success">
+                <strong>✅ Resultado:</strong> El trabajo se ejecutó en <strong>nodo13, core 2</strong>
+            </div>
+
+            <h3>4.h) Prioridad de opciones: ¿Script vs. Línea de comandos?</h3>
+            <p><strong>Experimento:</strong> Script con <code>--nodelist=nodo16</code> interno, lanzado con <code>sbatch --nodelist=nodo10</code></p>
+
+            <div class="alert alert-success">
+                <strong>🏆 Conclusión:</strong> La opción especificada <strong>desde la línea de comandos tiene prioridad</strong> sobre la especificada dentro del script. El trabajo se ejecutó en <code>nodo10</code>.
+            </div>
+        </section>
+
+        <!-- Punto 5: Estados y Cancelación -->
+        <section id="estados" class="section">
+            <h2>🛑 Punto 5: Estados y Cancelación de Trabajos</h2>
+            
+            <h3>5.a) Información con <code>scontrol show job</code></h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Campo</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Estado</strong></td>
+                            <td><code>COMPLETED</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Lista de nodos</strong></td>
+                            <td><code>nodo13</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Comando</strong></td>
+                            <td><code>launch_serie</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Archivo de salida</strong></td>
+                            <td><code>/nethome/uncoma20/TP2/salida.txt</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Archivo de error</strong></td>
+                            <td><code>/nethome/uncoma20/TP2/errores.txt</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>5.b) Estado RUNNING</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Nombre corto</strong></td>
+                            <td><code>R</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nombre largo</strong></td>
+                            <td><code>RUNNING</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Significado</strong></td>
+                            <td>El trabajo tiene una asignación de recursos y se está ejecutando</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>5.c) Estado PENDING</h3>
+            <p><strong>Experimento:</strong> Dos trabajos con <code>--exclusive</code> hacia el mismo nodo.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Nombre corto</strong></td>
+                            <td><code>PD</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nombre largo</strong></td>
+                            <td><code>PENDING</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Motivo</strong></td>
+                            <td><code>(Resources)</code> - esperando liberación de recursos</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>5.d) Cancelación de trabajos con <code>scancel</code></h3>
+            <div class="alert alert-success">
+                <strong>✅ Resultado:</strong> El trabajo <strong>ya no aparece en la lista</strong> de <code>squeue</code>, confirmando que <code>scancel</code> eliminó exitosamente el trabajo de la cola.
+            </div>
+
+            <h3>5.e) Límite de tiempo de ejecución</h3>
+            <p><strong>Opción utilizada:</strong> <code>--time=HH:MM:SS</code> o <code>-t HH:MM:SS</code></p>
+            
+            <div class="alert alert-warning">
+                <strong>🔍 Resultado:</strong> Cuando un trabajo supera el tiempo límite, SLURM lo termina automáticamente y cambia su estado a <strong><code>TIMEOUT</code></strong> con razón <strong><code>TimeLimit</code></strong>. El código de salida <code>0:15</code> indica que fue terminado por la señal <code>SIGTERM</code> (señal 15).
+            </div>
+        </section>
+
+        <!-- Punto 6: Detalle de los Recursos -->
+        <section id="detalle-nodos" class="section">
+            <h2>🖥️ Punto 6: Detalle de los Recursos de un Nodo</h2>
+            
+            <h3>Especificaciones del nodo (nodo1, partición Blade)</h3>
+            
+            <div class="grid">
+                <div class="card">
+                    <h4>Sockets</h4>
+                    <p><strong>2 sockets</strong></p>
+                </div>
+                <div class="card">
+                    <h4>Procesador</h4>
+                    <p>Intel® Xeon® CPU E5405 @ 2.00GHz</p>
+                </div>
+                <div class="card">
+                    <h4>Cores</h4>
+                    <p>4 cores/socket, 8 cores totales</p>
+                </div>
+                <div class="card">
+                    <h4>Frecuencia</h4>
+                    <p>2000.056 MHz (~2.0 GHz)</p>
+                </div>
+                <div class="card">
+                    <h4>Arquitectura</h4>
+                    <p><strong>NUMA</strong> (Non-Uniform Memory Access)</p>
+                </div>
+                <div class="card">
+                    <h4>Memoria RAM</h4>
+                    <p>~7.79 GB total, ~7.33 GB disponible</p>
+                </div>
+                <div class="card">
+                    <h4>Swap</h4>
+                    <p><strong>0 KB</strong> (no configurada)</p>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>📌 Nota sobre NUMA:</strong> Aunque en este caso todos los cores (0-7) pertenecen al mismo nodo NUMA 0, la arquitectura del sistema está configurada para soportar acceso no uniforme a memoria, lo cual es característico de sistemas multiprocesador con múltiples sockets.
+            </div>
+
+            <div class="alert alert-warning">
+                <strong>📌 Observación sobre Swap:</strong> Esto es común en entornos de cluster donde los trabajos se ejecutan con recursos asignados exclusivamente y no se requiere swap, ya que SLURM gestiona la asignación de memoria de forma controlada.
+            </div>
+        </section>
+
+        <!-- Resumen General -->
+        <section class="section">
+            <h2>📚 Resumen General</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Punto</th>
+                            <th>Tema</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>3</td>
+                            <td>Recursos del cluster</td>
+                            <td><span class="badge badge-success">✅ Completado</span></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Lanzar trabajos</td>
+                            <td><span class="badge badge-success">✅ Completado</span></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Estados y cancelación</td>
+                            <td><span class="badge badge-success">✅ Completado</span></td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Detalle de recursos</td>
+                            <td><span class="badge badge-success">✅ Completado</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="alert alert-success">
+                <strong>🎯 Conclusiones finales:</strong>
+                <ul>
+                    <li>Se logró acceder y gestionar archivos en el cluster III-LIDI ✅</li>
+                    <li>Se comprendió el uso de SLURM para lanzar y monitorear trabajos ✅</li>
+                    <li>Se identificaron los diferentes estados de los trabajos (RUNNING, PENDING, COMPLETED, TIMEOUT, CG) ✅</li>
+                    <li>Se verificó la prioridad de opciones externas sobre las internas del script ✅</li>
+                    <li>Se analizaron los recursos hardware de los nodos del cluster ✅</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>Facultad de Informática - Sistemas Paralelos 2026</p>
+    </footer>
+</body>
+</html>

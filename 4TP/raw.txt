@@ -1,0 +1,133 @@
+Iniciando el programa
+Experimento con cores: 1
+
+JULIA_OPENMP:
+  C/OpenMP version.
+  Plot a version of the Julia set for Z(k+1)=Z(k)^2-0.8+0.156i
+  Using 1 threads max, 106.896 seconds
+
+  Graphics data saved as 'julia_openmp.tga'
+
+JULIA_OPENMP:
+  Normal end of execution.
+-------------------------------
+Experimento con cores: 2
+
+JULIA_OPENMP:
+  C/OpenMP version.
+  Plot a version of the Julia set for Z(k+1)=Z(k)^2-0.8+0.156i
+  Using 2 threads max, 53.47 seconds
+
+  Graphics data saved as 'julia_openmp.tga'
+
+JULIA_OPENMP:
+  Normal end of execution.
+-------------------------------
+Experimento con cores: 4
+
+JULIA_OPENMP:
+  C/OpenMP version.
+  Plot a version of the Julia set for Z(k+1)=Z(k)^2-0.8+0.156i
+  Using 4 threads max, 48.5626 seconds
+
+  Graphics data saved as 'julia_openmp.tga'
+
+JULIA_OPENMP:
+  Normal end of execution.
+-------------------------------
+Experimento con cores: 8
+
+JULIA_OPENMP:
+  C/OpenMP version.
+  Plot a version of the Julia set for Z(k+1)=Z(k)^2-0.8+0.156i
+  Using 8 threads max, 36.4595 seconds
+
+  Graphics data saved as 'julia_openmp.tga'
+
+JULIA_OPENMP:
+  Normal end of execution.
+-------------------------------
+Fin del programa
+
+
+
+Data:
+Tn,1 = 106.896s
+Tn,2 = 53.47s
+Tn,4 = 48.5626
+Tn,8 = 36.4595
+
+
+Escalabilidad Fuerte
+Speed-Up:
+Sn,1 = 106.896s/ 106.896s	= 1
+Sn,2 = 106.896s/ 53.47s 	= 1.9991
+Sn,4 = 106.896s/ 48.5626s 	= 2.2012
+Sn,8 = 106.896s/ 36.4595s 	= 2.9319 	
+
+Observacion Speedup: la speedup a medida que aumentan los cores su valor se va alejando de la cantidad cores con que se testeo.
+
+
+Eficiencia Paralela:
+
+En,1 = 1/1 = 1
+En,2 = 1.9991/2 = 0.9995
+En,4 = 2.2012/4 = 0,5503
+En,8 = 2.9319/8 = 0,3664
+
+Observacion de Eficiencia paralela: la eficiencia va decayendo a medida que se agregan mas cores.
+
+
+
+
+
+Escalabilidad Debil:
+Formula Nn = sqrt (n*N1^2)/2000 <<2000 es el ancho fijo de la imagen, varia solo alto>>
+
+sqrt(n(8E3*2E3)^2)/2E3 -->
+((n*(8E3*2E3)^2)^(1/2))/2E3 -->
+(n^(1/2)*(16E6)^(2/2))/2E3 -->
+sqrt(n) * 16E6/2E3 -->
+sqrt(n) * 8E3
+
+Entonces Nn = sqrt(n) * 8E3
+
+N1 = 8E3
+N2 = 11313
+N4 = 16000
+N8 = 22627
+
+Iniciando el programa
+Experimento con cores: 1
+
+JULIA_OPENMP:
+  C/OpenMP version.
+  Plot a version of the Julia set for Z(k+1)=Z(k)^2-0.8+0.156i
+  Using 1 threads max, 3.56298 seconds
+
+  Graphics data saved as 'julia_openmp.tga'
+
+JULIA_OPENMP:
+  Normal end of execution.
+-------------------------------
+Fin del programa
+
+
+Tn1,1 = 3.56s
+Tn2,2 = 2.52s
+Tn4,4 = 3.24s
+Tn8,8 = 3.43s
+
+Luego En,p = Tn1,1/Tn,p:
+En1,1 = 3.56/3.56 = 1
+En2,2 = 3.56/2.52 = 1.41
+En4,4 = 3.56/3.24 = 1.098
+En8,8 = 3.56/3.43 = 1.038
+
+Conclusion:
+Observamos que la eficiencia esta por encima de 1, esto se debe a que hay speed-up superlineal que es cuando Sn,p > p,
+esto se debe a que hay mas memoria rapida disponible, haciendo que el programa acceda a los datos rapidamente.
+
+Consideraciones: se ha logrado realizar las medidas ya que eran valores que la memoria podia soportar. Sin embargo si nos vamos a valores mucho mas grandes, entonces no seria posible realizar la medicion con un problema mas grande.
+
+
