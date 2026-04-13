@@ -29,8 +29,7 @@ El programa calcula **"conjuntos de Julia"**. Los conjuntos de Julia son una fam
 ![Conjunto de Julia](img/image-000.png)
 
 #### 📋 Observaciones Importantes
-
-- 🔨 **Compilación:** Compilar el programa OpenMP `julia.c` con el compilador GCC, utilizar la opción de OpenMP y la opción de optimización `-O3`:
+- 🔨 **Compilación:** Compilar el programa OpenMP [julia.c](julia.c) con el compilador GCC, utilizar la opción de OpenMP y la opción de optimización `-O3`:
   ```bash
   $ gcc -fopenmp -O3 julia.c -o julia
   ```
