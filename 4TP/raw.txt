@@ -128,6 +128,6 @@ Conclusion:
 Observamos que la eficiencia esta por encima de 1, esto se debe a que hay speed-up superlineal que es cuando Sn,p > p,
 esto se debe a que hay mas memoria rapida disponible, haciendo que el programa acceda a los datos rapidamente.
 
-Consideraciones: se ha logrado realizar las medidas ya que eran valores que la memoria podia soportar. Sin embargo si nos vamos a valores mucho mas grandes, entonces no seria posible realizar la medicion con un problema mas grande.
+Consideraciones: se ha logrado realizar las medidas ya que eran valores que la memoria podia soportar. Sin embargo si nos vamos a valores mucho mas grandes, entonces no seria posible realizar la medicion con un problema mas grande, porque provocaria problemas de segmentacion de memoria, en este caso, contamos con 10GiB disponibles asi que, a partir de un problema de esa magnitud, entonces el test de eficiencia sera imposible a nivel practico.
 
 

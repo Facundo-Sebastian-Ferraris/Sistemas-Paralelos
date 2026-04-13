@@ -105,7 +105,7 @@ Se provee el programa [programa1.c](programa1.c), que muestra un ejemplo en el q
 
 #### ✅ Tareas:
 
-- 🛠️ Completar el programa [programa2.c](programa2) con **mediciones de tiempo**
+- 🛠️ Completar el programa [programa2.c](programa2.c) con **mediciones de tiempo**
 - 🎯 Tener en cuenta que se desean realizar experimentos con **ejecuciones cortas** pero cuyos resultados sean **representativos de ejecuciones muy largas**
 - 🔮 Indicar cómo se podría estimar el tiempo para una ejecución con: **n = 1.000.000**
 
