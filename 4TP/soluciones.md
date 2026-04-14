@@ -1,17 +1,35 @@
 # 🎓 Soluciones - Trabajo Práctico Nº 4: Análisis de Rendimiento de Aplicaciones Paralelas - 2026
 
+> 🔗 **Este documento contiene las respuestas completas a los ejercicios planteados en el [README.md](README.md) del TP4.**
+
 ---
 
 ## 📋 Índice
 
-1. [Ejercicio 1.i - Escalabilidad Fuerte](#ejercicio-1i---escalabilidad-fuerte)
-2. [Ejercicio 1.ii - Escalabilidad Débil](#ejercicio-1ii---escalabilidad-débil)
-3. [Ejercicio 2 - Instrumentación de Programa Serie](#ejercicio-2---instrumentación-de-programa-serie)
-4. [Ejercicio 3 - Cálculo de Aceleración](#ejercicio-3---cálculo-de-aceleración)
+1. [Ejercicio 1.i - Escalabilidad Fuerte](#ejercicio-1i---escalabilidad-fuerte) ↔️ [Ver enunciado en README](#-ejercicio-1i-escalabilidad-fuerte)
+2. [Ejercicio 1.ii - Escalabilidad Débil](#ejercicio-1ii---escalabilidad-débil) ↔️ [Ver enunciado en README](#-ejercicio-1ii-escalabilidad-débil)
+3. [Ejercicio 2 - Instrumentación de Programa Serie](#ejercicio-2---instrumentación-de-programa-serie) ↔️ [Ver enunciado en README](#2️⃣-instrumentación-de-un-programa-serie)
+4. [Ejercicio 3 - Cálculo de Aceleración](#ejercicio-3---cálculo-de-aceleración) ↔️ [Ver enunciado en README](#3️⃣-cálculo-de-aceleración)
+
+---
+
+## 🧮 Contexto: Programa de Conjuntos de Julia
+
+El programa [`julia.c`](julia.c) calcula el **conjunto de Julia**, un fractal que se obtiene iterando una función holomorfa con números complejos.
+
+**🖼️ Imagen generada por el programa:**
+
+![Conjunto de Julia](img/image-004.png)
+
+> 📌 *Ejemplo de fractal de Julia generado con el programa compilado con OpenMP.*
+
+🔗 **Más detalles en el README:** [🧮 Programa a Evaluar: Conjuntos de Julia](#-programa-a-evaluar-conjuntos-de-julia)
 
 ---
 
 ## Ejercicio 1.i - Escalabilidad Fuerte
+
+> 📖 **Enunciado completo en:** [📊 Ejercicio 1.i: Escalabilidad Fuerte (README)](#-ejercicio-1i-escalabilidad-fuerte)
 
 ### 📜 a) Script de Ejecución
 
@@ -163,6 +181,8 @@ Eficiencia
 
 ## Ejercicio 1.ii - Escalabilidad Débil
 
+> 📖 **Enunciado completo en:** [📈 Ejercicio 1.ii: Escalabilidad Débil (README)](#-ejercicio-1ii-escalabilidad-débil)
+
 ### 📜 a) Script con Cálculo del Tamaño del Problema
 
 #### 🧮 Derivación de la Fórmula
@@ -283,6 +303,8 @@ Fórmula: **En,p = T(1,1) / T(n,p)**
 
 ## Ejercicio 2 - Instrumentación de Programa Serie
 
+> 📖 **Enunciado completo en:** [2️⃣ Instrumentación de un Programa Serie (README)](#2️⃣-instrumentación-de-un-programa-serie)
+
 ### 🛠️ Programa Completado: [programa2.c](programa2.c)
 
 ```c
@@ -402,6 +424,8 @@ T(1.000.000) = 1.000.000 × 9.3s = 9.300.000 segundos
 ---
 
 ## Ejercicio 3 - Cálculo de Aceleración
+
+> 📖 **Enunciado completo en:** [3️⃣ Cálculo de Aceleración (README)](#3️⃣-cálculo-de-aceleración)
 
 ### ⚡ Ejercicio 8 (TP3)
 
