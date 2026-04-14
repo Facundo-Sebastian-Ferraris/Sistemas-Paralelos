@@ -19,7 +19,7 @@ El programa [`julia.c`](julia.c) calcula el **conjunto de Julia**, un fractal qu
 
 **🖼️ Imagen generada por el programa:**
 
-![Conjunto de Julia](img/julia_openmp.tga)
+![Conjunto de Julia](img/julia_openmp.png)
 
 > 📌 *Ejemplo de fractal de Julia generado con el programa compilado con OpenMP.*
 
