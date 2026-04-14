@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo Experimento con cores: ${1}
+export OMP_NUM_THREADS=${1}
+./p2T 1

@@ -63,7 +63,7 @@ Speed-Up:
 Sn,1 = 106.896s/ 106.896s	= 1
 Sn,2 = 106.896s/ 53.47s 	= 1.9991
 Sn,4 = 106.896s/ 48.5626s 	= 2.2012
-Sn,8 = 106.896s/ 36.4595s 	= 2.9319 	
+Sn,8 = 106.896s/ 36.4595s 	= 2.9319
 
 Observacion Speedup: la speedup a medida que aumentan los cores su valor se va alejando de la cantidad cores con que se testeo.
 
@@ -129,5 +129,46 @@ Observamos que la eficiencia esta por encima de 1, esto se debe a que hay speed-
 esto se debe a que hay mas memoria rapida disponible, haciendo que el programa acceda a los datos rapidamente.
 
 Consideraciones: se ha logrado realizar las medidas ya que eran valores que la memoria podia soportar. Sin embargo si nos vamos a valores mucho mas grandes, entonces no seria posible realizar la medicion con un problema mas grande, porque provocaria problemas de segmentacion de memoria, en este caso, contamos con 10GiB disponibles asi que, a partir de un problema de esa magnitud, entonces el test de eficiencia sera imposible a nivel practico.
+
+
+
+
+Programa 2:
+El orden del algoritmo es O(n)
+T(n) = n*c
+
+T(1) = 9.3s
+T(2) = 18.6s
+T(3) = 27.9s
+
+Tiempo por iteracuib: aprox 27.9s/3 = 9.3s
+
+Tiempo estimado si n = E6:
+	9.3E6s que equivale a 107 dias aproximadamente
+
+
+
+3)
+Ej8:
+
+Tiempo del codigo original: 	45.895s
+Tiempo del codigo optimizado:	3.251s
+
+Speedup(aceleracion) = tiempo sin optimizar / tiempo optimizado =
+				45.895s/3.251 = 14.117
+
+Observacion: el programa optimizado es 14.117 veces más rápido que el original, esto se debe al mejor uso de la caché, contribuyendo a la localidad espacial y temporal.
+
+Ej10:
+
+Tiempo del codigo original: 	1.558s
+Tiempo del codigo optimizado:	0.348s
+
+Speedup = 1.558s/0.348s = 4.477
+
+Observacion: el programa optimizado es 4.477 veces mas rapido que el original, ya que se tiene u mejor uso de la cache y la implementacion de intrucciones vectoriales.
+
+
+
 
 
