@@ -1,0 +1,26 @@
+Arquitectura:                        x86_64
+modo(s) de operación de las CPUs:    32-bit, 64-bit
+Orden de los bytes:                  Little Endian
+Tamaños de las direcciones:          38 bits physical, 48 bits virtual
+CPU(s):                              8
+Lista de la(s) CPU(s) en línea:      0-7
+Hilo(s) de procesamiento por núcleo: 1
+Núcleo(s) por «socket»:              4
+«Socket(s)»                          2
+Modo(s) NUMA:                        1
+ID de fabricante:                    GenuineIntel
+Familia de CPU:                      6
+Modelo:                              23
+Nombre del modelo:                   Intel(R) Xeon(R) CPU           E5405  @ 2.00GHz
+Revisión:                            10
+CPU MHz:                             2000.056
+BogoMIPS:                            4000.11
+Virtualización:                      VT-x
+Caché L1d:                           32K
+Caché L1i:                           32K
+Caché L2:                            6144K
+CPU(s) del nodo NUMA 0:              0-7
+Indicadores:                         fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx lm constant_tsc arch_perfmon pebs bts rep_good nopl cpuid aperfmperf pni dtes64 monitor ds_cpl vmx tm2 ssse3 cx16 xtpr pdcm dca sse4_1 xsave lahf_lm pti tpr_shadow vnmi flexpriority dtherm
+              total        used        free      shared  buff/cache   available
+Mem:        8167492      145552     4014136       74288     4007804     7682276
+Swap:             0           0           0

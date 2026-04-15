@@ -1,0 +1,2 @@
+Programa 2
+El valor calculado es: 4.000000

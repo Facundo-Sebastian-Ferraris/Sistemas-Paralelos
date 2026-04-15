@@ -1,0 +1,3 @@
+Algoritmo Viejo con int
+
+Algoritmo Nuevo con char

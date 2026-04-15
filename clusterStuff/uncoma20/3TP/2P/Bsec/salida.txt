@@ -1,0 +1,2 @@
+Iniciando el programa cambiando nodo a 16
+Fin del programa

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#SBATCH -N 1
+#SBATCH --exclusive
+#SBATCH --partition=Blade
+#SBATCH --nodelist=nodo1
+#SBATCH -o salida_6x.txt
+#SBATCH -e errores_6x.txt
+
+echo "Algoritmo a ejecutar"
+time ./6x

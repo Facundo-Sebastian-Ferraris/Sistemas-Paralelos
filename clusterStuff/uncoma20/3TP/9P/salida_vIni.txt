@@ -1,0 +1,2 @@
+Algoritmo a ejecutar
+valor obtenido: 67108864.000000

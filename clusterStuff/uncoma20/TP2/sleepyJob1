@@ -1,0 +1,8 @@
+#!/bin/bash                                                                        
+#SBATCH -N 1                                                                       
+#SBATCH --exclusive                                                                
+#SBATCH --nodelist=nodo1
+#SBATCH --partition=Blade                                                          
+#SBATCH -o salida.txt                                                              
+#SBATCH -e errores.txt          
+sleep 120

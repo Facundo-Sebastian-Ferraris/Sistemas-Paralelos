@@ -1,0 +1,3 @@
+Algoritmo a ejecutar
+argumento agregado b
+procede con algoritmo con codigo sobre linea

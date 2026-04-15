@@ -1,0 +1,14 @@
+Iniciando el programa
+Experimento con cores: 8
+
+JULIA_OPENMP:
+  C/OpenMP version.
+  Plot a version of the Julia set for Z(k+1)=Z(k)^2-0.8+0.156i
+  Using 8 threads max, 0.159917 seconds
+
+  Graphics data saved as 'julia_openmp.tga'
+
+JULIA_OPENMP:
+  Normal end of execution.
+-------------------------------
+Fin del programa

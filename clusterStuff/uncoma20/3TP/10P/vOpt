@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#SBATCH -N 1
+#SBATCH --exclusive
+#SBATCH --partition=Blade
+#SBATCH --nodelist=nodo2
+#SBATCH -o salida_vOpt.txt
+#SBATCH -e errores_vOpt.txt
+
+echo "Algoritmo a ejecutar"
+time ./10opt 

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#SBATCH -N 1
+#SBATCH --exclusive
+#SBATCH --partition=Blade
+#SBATCH --nodelist=nodo1
+#SBATCH -o salida_p3.txt
+#SBATCH -e errores_p3.txt
+
+echo "Programa 3"
+time ./p3

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#SBATCH -N 1
+#SBATCH --exclusive
+#SBATCH --partition=Blade
+#SBATCH --nodelist=nodo16
+#SBATCH -o salidaOld.txt
+#SBATCH -e erroresOld.txt
+
+echo Algoritmo Viejo con int
+time ./Xold
+echo 
+echo Algoritmo Nuevo con char
+time ./Xnew

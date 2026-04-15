@@ -1,0 +1,5 @@
+Algoritmo a ejecutar
+elemento 0: 5
+elemento 499999999: 50000004
+elemento 500000000: 50000005
+elemento 999999999: 99999994

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#SBATCH -N 1
+#SBATCH --exclusive
+#SBATCH --partition=Blade
+#SBATCH --nodelist=nodo16
+#SBATCH -o salidaNuevo.txt
+#SBATCH -e erroresNuevo.txt
+
+echo Iniciando el programa cambiando nodo a 16
+time ./nueva
+echo Fin del programa

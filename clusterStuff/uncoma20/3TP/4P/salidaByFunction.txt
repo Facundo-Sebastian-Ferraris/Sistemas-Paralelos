@@ -1,0 +1,3 @@
+Algoritmo a ejecutar
+argumento agregado a
+procede con algoritmo con llamado de funciones

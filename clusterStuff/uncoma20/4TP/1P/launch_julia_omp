@@ -1,0 +1,21 @@
+#!/bin/bash
+#SBATCH --exclusive
+#SBATCH --partition=Blade
+#SBATCH -o salida.txt
+#SBATCH -e errores.txt
+
+echo Iniciando el programa
+
+height=1080
+width=1920
+
+listOfCores="8"
+
+for cores in $listOfCores; do
+   echo Experimento con cores: $cores
+   export OMP_NUM_THREADS=$cores
+   ./julia $height $width
+   echo -------------------------------
+done
+echo Fin del programa
+
