@@ -1,0 +1,64 @@
+Como usar OpenMP
+
+Utilizar la libreria:
+#include	<omp.h>
+
+Compilar codigo con la flag:
+-fopenmp
+
+utilizamos la directiva:
+#pragma omp parallel{}
+
+	observacion: el main se queda a la espera de que todos los hilos finalicen
+		para seguir avanzando
+
+clausulas para pragma:
+
+	num_threads(int): cuantos se van a utilizar
+
+	GESTIÓN DE DATOS:
+
+		shared(...var): todos los hilos comparten la misma zona de memoria
+							para ...var
+
+		private(...var): copia local de cada variable para cada hilo.
+							Variable no inicializada al entrar en el bucle.
+							Su valor se pierde al salir.
+
+		firstprivate(...var): como private, pero inicializa con el valor que tenia
+									previo al pragma.
+
+	REDUCCIÓN Y SINCRONIZACIÓN:
+
+		reduction(operador:...var): combina de forma segura variables privadas 
+											de los hilos usando un operador.
+											Previene programar exclusiones mutuas 
+											manualmente para un acumulador.
+
+	PLANIFICACIÓN Y REPARTO DE TRABAJO:
+
+		schedule(tipo[, size_bloque]): para comprender el balance de carga
+			
+			en 'tipo':
+				static: divide iteraciones en partes iguales antes de la ejecucion
+
+				dynamic: asigna bloques de iteraciones a los hilos a medida
+							que van liberando (util si desconocemos el tiempo de 
+							cada tarea)
+
+				guided: similar al dinamico, pero el size del bloque disminuye
+							exponencialmente con el tiempo.
+
+
+	EJEMPLO SUPREMO:
+
+	#pragma omp parallel for default(none) shared(array, n) private(i) reduction(+:total){
+		for (i = 0; i < n; i++) {
+    		total += array[i];
+		}
+	}
+
+
+
+
+

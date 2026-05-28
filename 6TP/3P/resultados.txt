@@ -1,0 +1,28 @@
+private
+varA (in): 21866
+varA (in): 32654
+varA (in): 32654
+varA (in): 32654
+varA (out): 10
+
+firstPrivate
+varB (in): 11
+varB (in): 11
+varB (in): 11
+varB (in): 11
+varB (out): 10
+
+shared
+varC (in): 11
+varC (in): 11
+varC (in): 11
+varC (in): 11
+varC (out): 11
+
+shared with critical:
+varD (in): 11
+varD (in): 12
+varD (in): 13
+varD (in): 14
+varD (out): 14
+
